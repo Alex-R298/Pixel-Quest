@@ -1,9 +1,9 @@
 class MovableObject {
-        x = 400;
-        y = 150;
+        x = 120;
+        y = 250;
         img;
-        height = 80;
-        width = 80;
+        height = 70;
+        width = 70;
         currentFrame = 0;
         totalFrames = 4; // Anzahl der Frames im Sprite Sheet
         frameWidth = 0;  // Wird berechnet wenn Bild lädt

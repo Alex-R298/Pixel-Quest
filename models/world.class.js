@@ -5,6 +5,16 @@ class World {
         new SmallMushroom(), 
         new SmallMushroom()
     ];
+
+    clouds = [
+        new Cloud(),
+        new Cloud(),
+        new Cloud()
+    ];
+    backgroundObjects = [
+        new BackgroundObject('../img/Background/Layers/1.png', 0, 0),
+    ];
+
     canvas;
     ctx;
 
@@ -14,35 +24,51 @@ class World {
         this.draw();
     }
 
-
     draw() {
-       this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
-        // draw wird immer wieder aufgerufen
-       let self = this;
-                requestAnimationFrame(function() {
-                    self.draw();
-                });
+        this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+        
+        let self = this;
+        requestAnimationFrame(function() {
+            self.draw();
+        });
+        
         this.character.animate();
         this.enemies.forEach(enemy => enemy.animate());
         
-        // Prüfen ob Bild geladen ist und frameWidth berechnet wurde
-        if (this.character.img.complete && this.character.frameWidth > 0) {
-            // Position des aktuellen Frames im Sprite Sheet berechnen
-            const sourceX = this.character.currentFrame * this.character.frameWidth;
+        // RICHTIGE REIHENFOLGE (von hinten nach vorne):
+        
+        // 1. Background Objects (ganz hinten)
+        this.addObjectsToMap(this.backgroundObjects);
+        
+        // 2. Clouds (Hintergrund-Wolken)
+        this.addObjectsToMap(this.clouds);
+        
+        // 3. Character (Spielfigur)
+        this.addObjectsToMap([this.character]);
+        
+        // 4. Enemies (Gegner - vorne)
+        this.addObjectsToMap(this.enemies);
+    }
+
+    addObjectsToMap(objects) {
+        objects.forEach(o => {
+            this.addToMap(o);
+        });
+    }
+
+    addToMap(mo) {
+        if (mo.img && mo.img.complete && mo.frameWidth > 0) {
+            // Animierte Objekte mit Sprite Sheet
+            const sourceX = mo.currentFrame * mo.frameWidth;
             const sourceY = 0;
-            
-            
-            this.ctx.drawImage(this.character.img, sourceX, sourceY, this.character.frameWidth, this.character.frameHeight, this.character.x, this.character.y, this.character.width, this.character.height);
-            this.enemies.forEach(enemy => {
-                if (enemy.img.complete && enemy.frameWidth > 0) {
-                    const enemySourceX = enemy.currentFrame * enemy.frameWidth;
-                    const enemySourceY = 0;
-                    this.ctx.drawImage(enemy.img, enemySourceX, enemySourceY, enemy.frameWidth, enemy.frameHeight, enemy.x, enemy.y, enemy.width, enemy.height);
-                }
-            });
-
+            this.ctx.drawImage(
+                mo.img, 
+                sourceX, sourceY, mo.frameWidth, mo.frameHeight, 
+                mo.x, mo.y, mo.width, mo.height
+            );
+        } else if (mo.img && mo.img.complete) {
+            // Statische Objekte
+            this.ctx.drawImage(mo.img, mo.x, mo.y, mo.width, mo.height);
         }
-
     }
 }
- 
