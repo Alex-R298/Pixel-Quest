@@ -1,4 +1,4 @@
-class SmallMushroom extends MovableObject {
+class Endboss extends MovableObject {
     y;
     x;
     width = 80;
@@ -16,31 +16,27 @@ class SmallMushroom extends MovableObject {
         
         // Idle Sprite laden
         this.idleSprite = new Image();
-        this.idleSprite.src = '../img/Small_Mushroom/Small_Mushroom_Idle.png';
+        this.idleSprite.src = '../img/Huge mushroom/HugeMushroom_idle.png';
         this.img = this.idleSprite;
 
         // Walking Sprite laden
         this.walkingSprite = new Image();
-        this.walkingSprite.src = '../img/Small_Mushroom/Small_Mushroom_walk.png';
+        this.walkingSprite.src = '../img/Huge mushroom/HugeMushroom_walk.png';
         this.walkingSprite.onload = () => {
-            // Berechne frameWidth für Walking Sprite (4 Frames)
-            this.frameWidth = this.walkingSprite.width / 4;
+            // Berechne frameWidth für Walking Sprite (6 Frames)
+            this.frameWidth = this.walkingSprite.width / 6;
             this.frameHeight = this.walkingSprite.height;
-            console.log(`Walking sprite loaded, frameWidth: ${this.frameWidth}`);
         };
 
         this.x = x;
         this.y = y;
-        this.width = 80;
-        this.height = 80;
-        this.totalFrames = 4; // 4 Frames im Walking Sprite
+        this.width = 160;
+        this.height = 160;
+        this.totalFrames = 6; // 6 Frames im Walking Sprite
         this.speed = 0.15 + Math.random() * 0.25; // Langsamere Geschwindigkeit
-    // ✅ HIER KOMMT DEIN NEUER CODE REIN:
-        this.leftBoundary = x - 60;  // 60px links von Start
-        this.rightBoundary = x + 60; // 60px rechts von Start
+        this.leftBoundary = x - 150;  // 150px links von Start
+        this.rightBoundary = x + 150; // 150px rechts von Start
         this.direction = -1; // Startet nach links
-        
-        console.log(`Mushroom created at x:${x}, boundaries: ${this.leftBoundary} - ${this.rightBoundary}`);
     }
 
     // ✅ HIER KOMMT DIE NEUE move() METHODE REIN:
@@ -70,3 +66,4 @@ class SmallMushroom extends MovableObject {
         this.currentFrame = 0;
     }
 }
+

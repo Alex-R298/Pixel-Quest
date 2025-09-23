@@ -12,24 +12,32 @@ class MovableObject {
         lastFrameTime = 0;
         speed = 0.15;
         imageCache = {};
+        otherDirection = false;
 
 
-        loadImage(path) {
-            this.img = new Image();
-            this.img.src = path;
-            this.img.onload = () => {
-            this.frameWidth = this.img.width / this.totalFrames;
-            this.frameHeight = this.img.height;
+         loadImage(path) {
+        // ✅ Speichere Image-Referenz in lokaler Variable
+        const img = new Image();
+        img.src = path;
+        img.onload = () => {
+            // ✅ Nutze die lokale img Variable, nicht this.img
+            this.frameWidth = img.width / this.totalFrames;
+            this.frameHeight = img.height;
+            console.log(`Image loaded: ${path}, frameWidth: ${this.frameWidth}`);
         };
-        }
+        this.img = img; // Setze this.img erst nach der onload Definition
+    }
 
-        loadImages(arr) {
-            arr.forEach((path) => {
-                let img = new Image();
-                img.src = path;
-                this.imageCache[path] = img;
-            });
-        }
+    //     loadImages(arr) {
+    //     arr.forEach((path) => {
+    //         const img = new Image();
+    //         img.src = path;
+    //         img.onload = () => {
+    //             console.log(`Cached image loaded: ${path}`);
+    //         };
+    //         this.imageCache[path] = img;
+    //     });
+    // }
 
         animate() {
             const currentTime = Date.now();
