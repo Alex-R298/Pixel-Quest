@@ -1,6 +1,6 @@
 class MovableObject {
-        x = 120;
-        y = 250;
+        x = 0;
+        y = 360;
         img;
         height = 70;
         width = 70;
@@ -10,6 +10,8 @@ class MovableObject {
         frameHeight = 0; // Wird berechnet wenn Bild lädt
         animationSpeed = 100; // Millisekunden zwischen Frames
         lastFrameTime = 0;
+        speed = 0.15;
+        imageCache = {};
 
 
         loadImage(path) {
@@ -19,6 +21,14 @@ class MovableObject {
             this.frameWidth = this.img.width / this.totalFrames;
             this.frameHeight = this.img.height;
         };
+        }
+
+        loadImages(arr) {
+            arr.forEach((path) => {
+                let img = new Image();
+                img.src = path;
+                this.imageCache[path] = img;
+            });
         }
 
         animate() {
@@ -33,13 +43,12 @@ class MovableObject {
             }
         }
 
-        moveRight() {
-            console.log("move right");
-        }
-
-        moveLeft() {
-        
+         moveRight() {
+        this.x += this.speed; // ✅ Einfache Bewegung ohne Timer
     }
 
-    
+    moveLeft() {
+        this.x -= this.speed;
+
+    }
 }
