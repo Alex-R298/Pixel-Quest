@@ -14,13 +14,26 @@ class MovableObject {
         imageCache = {};
         otherDirection = false;
         speedY = 0;
-        acceleration = 1;
+        acceleration = 0.1; // Schwerkraft
 
-        applyGravity() {
-            setInterval(() => {
-                this.y += this.speedY;
-                this.speedY += this.acceleration;
-            },1000 / 25);
+    applyGravity() {
+    if (this.isAboveGround() || this.speedY < 0) {
+        this.y += this.speedY;
+        this.speedY += this.acceleration;
+    } else {
+        if (this.isJumping) {
+            this.isJumping = false;
+            this.speedY = 0;
+            this.y = 360;
+            // ✅ Lass animate() den richtigen Sprite wählen
+            this.animate();
+        }
+    }
+}
+
+
+        isAboveGround() {
+            return this.y < 360;
         }
 
          loadImage(path) {
@@ -36,18 +49,18 @@ class MovableObject {
         this.img = img; // Setze this.img erst nach der onload Definition
     }
 
-    //     loadImages(arr) {
-    //     arr.forEach((path) => {
-    //         const img = new Image();
-    //         img.src = path;
-    //         img.onload = () => {
-    //             console.log(`Cached image loaded: ${path}`);
-    //         };
-    //         this.imageCache[path] = img;
-    //     });
-    // }
+        loadImages(arr) {
+        arr.forEach((path) => {
+            const img = new Image();
+            img.src = path;
+            img.onload = () => {
+                console.log(`Cached image loaded: ${path}`);
+            };
+            this.imageCache[path] = img;
+        });
+    }
 
-        animate() {
+        animateEnemy() {
             const currentTime = Date.now();
 
             if (currentTime - this.lastFrameTime >= this.animationSpeed) {
@@ -67,4 +80,20 @@ class MovableObject {
         this.x -= this.speed;
 
     }
+
+    jump() {
+    if (!this.isJumping && !this.isAboveGround()) {
+        this.isJumping = true;
+        this.speedY = -4.5; // Anfangsgeschwindigkeit des Sprungs
+        console.log("Jump initiated at y:", this.y);
+        // Jump Sprite wechseln
+        if (this.jumpSprite.complete) {
+            this.img = this.jumpSprite;
+            this.frameWidth = this.jumpSprite.width / 8;
+            this.frameHeight = this.jumpSprite.height;
+            this.totalFrames = 8;
+            this.currentFrame = 0;
+        }
+    }
+}
 }

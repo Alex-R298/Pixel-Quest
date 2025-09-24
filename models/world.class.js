@@ -34,11 +34,12 @@ class World {
         this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
 
         this.character.animate();
+        this.character.applyGravity();
         this.level.enemies.forEach(enemy => {
             // Bewegung (Position ändern)
             if (enemy.isMoving || enemy.isWalking) {
                 enemy.move(); // Bewege nach links
-                enemy.animate();
+                enemy.animateEnemy();
             }
         });
 
