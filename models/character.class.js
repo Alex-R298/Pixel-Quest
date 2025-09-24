@@ -38,7 +38,7 @@ class Character extends MovableObject {
         
         this.width = 60;
         this.height = 60;
-        this.speed = 10;
+        this.speed = 3;
         this.totalFrames = 4;
     }
 
@@ -79,7 +79,7 @@ class Character extends MovableObject {
                 this.totalFrames = 4;
                 this.currentFrame = 0;
             }
-          if (this.x > 360 && this.x < 2890 - 360) {
+          if (this.x > 360 && this.x < 2880 - 360) {
     this.world.camera_x = -this.x + 360;
 }
         }

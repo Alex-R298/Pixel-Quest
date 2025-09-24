@@ -13,7 +13,15 @@ class MovableObject {
         speed = 0.15;
         imageCache = {};
         otherDirection = false;
+        speedY = 0;
+        acceleration = 1;
 
+        applyGravity() {
+            setInterval(() => {
+                this.y += this.speedY;
+                this.speedY += this.acceleration;
+            },1000 / 25);
+        }
 
          loadImage(path) {
         // ✅ Speichere Image-Referenz in lokaler Variable
