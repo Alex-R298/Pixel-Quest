@@ -1,20 +1,10 @@
-class MovableObject {
-        x = 0;
-        y = 360;
-        img;
-        height = 70;
-        width = 70;
-        currentFrame = 0;
-        totalFrames = 4; // Anzahl der Frames im Sprite Sheet
-        frameWidth = 0;  // Wird berechnet wenn Bild lädt
-        frameHeight = 0; // Wird berechnet wenn Bild lädt
-        animationSpeed = 100; // Millisekunden zwischen Frames
-        lastFrameTime = 0;
+class MovableObject extends DrawableObject {
         speed = 0.15;
-        imageCache = {};
         otherDirection = false;
         speedY = 0;
-        acceleration = 0.1; // Schwerkraft
+        acceleration = 0.2; // Schwerkraft
+        energy = 100;
+        energyGreen = 100;
 
     applyGravity() {
     if (this.isAboveGround() || this.speedY < 0) {
@@ -24,7 +14,7 @@ class MovableObject {
         if (this.isJumping) {
             this.isJumping = false;
             this.speedY = 0;
-            this.y = 360;
+            this.y = 340;
             // ✅ Lass animate() den richtigen Sprite wählen
             this.animate();
         }
@@ -33,21 +23,35 @@ class MovableObject {
 
 
         isAboveGround() {
-            return this.y < 360;
+            return this.y < 340;
         }
 
-         loadImage(path) {
-        // ✅ Speichere Image-Referenz in lokaler Variable
-        const img = new Image();
-        img.src = path;
-        img.onload = () => {
-            // ✅ Nutze die lokale img Variable, nicht this.img
-            this.frameWidth = img.width / this.totalFrames;
-            this.frameHeight = img.height;
-            console.log(`Image loaded: ${path}, frameWidth: ${this.frameWidth}`);
-        };
-        this.img = img; // Setze this.img erst nach der onload Definition
+
+
+
+    isColliding(mo) {
+        return this.x + this.width > mo.x &&
+               this.y + this.height > mo.y &&
+               this.x < mo.x + mo.width &&
+               this.y < mo.y + mo.height;
     }
+
+    takeDamage(damage) {
+    if (this.isDead) return; // Kein Schaden wenn schon tot
+    
+    this.energy -= damage;
+    this.isHurt = true;
+    // Timer für Hurt-Animation
+    setTimeout(() => {
+        this.isHurt = false;
+    }, 600); // Hurt-Sprite 500ms anzeigen
+    
+    console.log("Character took damage:", damage, "Energy:", this.energy);
+}
+
+// isDead() {
+//     return this.energy <= 0;
+// }
 
         loadImages(arr) {
         arr.forEach((path) => {
@@ -84,7 +88,7 @@ class MovableObject {
     jump() {
     if (!this.isJumping && !this.isAboveGround()) {
         this.isJumping = true;
-        this.speedY = -4.5; // Anfangsgeschwindigkeit des Sprungs
+        this.speedY = -5; // Anfangsgeschwindigkeit des Sprungs
         console.log("Jump initiated at y:", this.y);
         // Jump Sprite wechseln
         if (this.jumpSprite.complete) {
@@ -94,6 +98,28 @@ class MovableObject {
             this.totalFrames = 8;
             this.currentFrame = 0;
         }
+    }
+
+}
+
+        attack() {
+    if (!this.isAttacking) {
+        this.isAttacking = true;
+         this.energyGreen -= 10; 
+        
+        if (this.attackSprite.complete) {
+            this.img = this.attackSprite;
+            this.frameWidth = this.attackSprite.width / 6;
+            this.frameHeight = this.attackSprite.height;
+            this.totalFrames = 6;
+            this.currentFrame = 0;
+        }
+        
+        // Timer um Attack zu beenden
+        setTimeout(() => {
+            this.isAttacking = false;
+        }, 500); // 6 Frames * 100ms
+        console.log("Attack initiated");
     }
 }
 }

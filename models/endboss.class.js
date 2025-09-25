@@ -47,7 +47,7 @@ class Endboss extends MovableObject {
     if (this.x <= this.leftBoundary || this.x >= this.rightBoundary) {
         this.direction *= -1;
         this.otherDirection = (this.direction === 1);
-        console.log(`Mushroom turned around at x:${this.x}, new direction:${this.direction}`);
+        // console.log(`Mushroom turned around at x:${this.x}, new direction:${this.direction}`);
     }
 }
 
@@ -56,7 +56,7 @@ class Endboss extends MovableObject {
         this.isMoving = true;
         this.img = this.walkingSprite; // ✅ Wechsle zum Walking Sprite
         this.currentFrame = 0; // ✅ Starte bei Frame 0
-        console.log("SmallMushroom started walking at x:", this.x);
+        // console.log("SmallMushroom started walking at x:", this.x);
     }
 
     stopWalking() {

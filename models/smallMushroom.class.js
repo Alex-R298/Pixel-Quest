@@ -26,7 +26,7 @@ class SmallMushroom extends MovableObject {
             // Berechne frameWidth für Walking Sprite (4 Frames)
             this.frameWidth = this.walkingSprite.width / 4;
             this.frameHeight = this.walkingSprite.height;
-            console.log(`Walking sprite loaded, frameWidth: ${this.frameWidth}`);
+            // console.log(`Walking sprite loaded, frameWidth: ${this.frameWidth}`);
         };
 
         this.x = x;
@@ -40,7 +40,7 @@ class SmallMushroom extends MovableObject {
         this.rightBoundary = x + 60; // 60px rechts von Start
         this.direction = -1; // Startet nach links
         
-        console.log(`Mushroom created at x:${x}, boundaries: ${this.leftBoundary} - ${this.rightBoundary}`);
+        // console.log(`Mushroom created at x:${x}, boundaries: ${this.leftBoundary} - ${this.rightBoundary}`);
     }
 
     // ✅ HIER KOMMT DIE NEUE move() METHODE REIN:
@@ -51,7 +51,7 @@ class SmallMushroom extends MovableObject {
     if (this.x <= this.leftBoundary || this.x >= this.rightBoundary) {
         this.direction *= -1;
         this.otherDirection = (this.direction === 1);
-        console.log(`Mushroom turned around at x:${this.x}, new direction:${this.direction}`);
+        // console.log(`Mushroom turned around at x:${this.x}, new direction:${this.direction}`);
     }
 }
 
@@ -60,7 +60,7 @@ class SmallMushroom extends MovableObject {
         this.isMoving = true;
         this.img = this.walkingSprite; // ✅ Wechsle zum Walking Sprite
         this.currentFrame = 0; // ✅ Starte bei Frame 0
-        console.log("SmallMushroom started walking at x:", this.x);
+        // console.log("SmallMushroom started walking at x:", this.x);
     }
 
     stopWalking() {
