@@ -163,7 +163,7 @@ class Character extends MovableObject {
 
                     if (this.world.keyboard.SPACE && !this.spaceKeyPressed && !this.isAttacking && !this.isJumping) {
                  // ✅ Prüfe Energie VOR dem Attack
-                if (this.energyGreen >= 10) {
+                if (this.energyGreen >= 20) { // Mindestens 1/9 der Energie
                         this.attack();
                         this.spaceKeyPressed = true;
                          this.isWalking = false;

@@ -36,16 +36,15 @@ class EnergyBar extends DrawableObject {
     }
 
     resolveImageIndexEnergy() {
-    if (this.percentage == 100) return 0;       // 100%
-    else if (this.percentage >= 90) return 1;   // 90% - 99%
-    else if (this.percentage >= 80) return 2;   // 80% - 89%
-    else if (this.percentage >= 70) return 3;   // 70% - 79%
-    else if (this.percentage >= 60) return 4;   // 60% - 69%
-    else if (this.percentage >= 50) return 5;   // 50% - 59%
-    else if (this.percentage >= 40) return 6;   // 40% - 49%
-    else if (this.percentage >= 30) return 7;   // 30% - 39%
-    else if (this.percentage >= 20) return 8;   // 20% - 29%
-    else if (this.percentage >= 10) return 9;   // 10% - 19%
-    else return 9;                              // 0% - 9% (empty)
+    if (this.percentage >= 100) return 0;
+    else if (this.percentage >= 90) return 1;
+    else if (this.percentage >= 80) return 2;
+    else if (this.percentage >= 70) return 3;
+    else if (this.percentage >= 60) return 4;
+    else if (this.percentage >= 50) return 5;
+    else if (this.percentage >= 40) return 6;
+    else if (this.percentage >= 30) return 7;
+    else if (this.percentage > 10) return 8;   // Nur über 10%
+    else return 9;                            // 10% und weniger = empty
 }
 }

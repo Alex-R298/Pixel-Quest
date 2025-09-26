@@ -22,7 +22,6 @@ class DrawableObject {
             // ✅ Nutze die lokale img Variable, nicht this.img
             this.frameWidth = img.width / this.totalFrames;
             this.frameHeight = img.height;
-            console.log(`Image loaded: ${path}, frameWidth: ${this.frameWidth}`);
         };
         this.img = img; // Setze this.img erst nach der onload Definition
     }
@@ -57,19 +56,19 @@ class DrawableObject {
             const img = new Image();
             img.src = path;
             img.onload = () => {
-                console.log(`Cached image loaded: ${path}`);
             };
             this.imageCache[path] = img;
         });
     }
 
     drawFrame(ctx) {
-        if (this instanceof Character || this instanceof Endboss || this instanceof SmallMushroom) {
-            ctx.beginPath();
-            ctx.lineWidth = '5';
-            ctx.strokeStyle = 'red';
-            ctx.rect(this.x, this.y, this.width, this.height);
-            ctx.stroke();
-        }
+    if (this instanceof Character || this instanceof Endboss || this instanceof SmallMushroom) {
+        ctx.beginPath();
+        ctx.lineWidth = '5';
+        ctx.strokeStyle = 'red';
+        ctx.rect(this.x + 30, this.y + 25, this.width - 60, this.height - 50);
+        ctx.stroke();
     }
+} 
+
 }

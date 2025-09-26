@@ -30,11 +30,13 @@ class MovableObject extends DrawableObject {
 
 
     isColliding(mo) {
-        return this.x + this.width > mo.x &&
-               this.y + this.height > mo.y &&
-               this.x < mo.x + mo.width &&
-               this.y < mo.y + mo.height;
-    }
+    return this.x + 30 < mo.x + mo.width - 30 &&
+           this.x + this.width - 30 > mo.x + 30 &&
+           this.y + 25 < mo.y + mo.height - 25 &&
+           this.y + this.height - 25 > mo.y + 25;
+}
+
+
 
     takeDamage(damage) {
     if (this.isDead) return; // Kein Schaden wenn schon tot
@@ -103,9 +105,10 @@ class MovableObject extends DrawableObject {
 }
 
         attack() {
-    if (!this.isAttacking) {
+     if (!this.isAttacking && this.energyGreen > 0) {
         this.isAttacking = true;
-         this.energyGreen -= 10; 
+            console.log("Energy after attack:", this.energyGreen);
+            console.log("Before attack:", this.energyGreen);
         
         if (this.attackSprite.complete) {
             this.img = this.attackSprite;
@@ -113,6 +116,9 @@ class MovableObject extends DrawableObject {
             this.frameHeight = this.attackSprite.height;
             this.totalFrames = 6;
             this.currentFrame = 0;
+
+            this.energyGreen -= 10; // Dann Energie reduzieren
+        if (this.energyGreen < 0) this.energyGreen = 0;
         }
         
         // Timer um Attack zu beenden

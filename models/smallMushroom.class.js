@@ -5,8 +5,10 @@ class SmallMushroom extends MovableObject {
     height = 80;
      isMoving = false;
     isWalking = false;
+    isAttacking = false;
     walkingSprite = null;
     idleSprite = null;
+    attackSprite = null;
      leftBoundary = 0;
     rightBoundary = 0;
     direction = -1;
@@ -14,10 +16,10 @@ class SmallMushroom extends MovableObject {
     constructor(x, y) {
         super(); // ✅ Korrekte super() Verwendung
         
-        // Idle Sprite laden
-        this.idleSprite = new Image();
-        this.idleSprite.src = '../img/Small_Mushroom/Small_Mushroom_Idle.png';
-        this.img = this.idleSprite;
+        // // Idle Sprite laden
+        // this.idleSprite = new Image();
+        // this.idleSprite.src = '../img/Small_Mushroom/Small_Mushroom_Idle.png';
+        // this.img = this.idleSprite;
 
         // Walking Sprite laden
         this.walkingSprite = new Image();
@@ -29,6 +31,7 @@ class SmallMushroom extends MovableObject {
             // console.log(`Walking sprite loaded, frameWidth: ${this.frameWidth}`);
         };
 
+
         this.x = x;
         this.y = y;
         this.width = 80;
@@ -39,6 +42,15 @@ class SmallMushroom extends MovableObject {
         this.leftBoundary = x - 60;  // 60px links von Start
         this.rightBoundary = x + 60; // 60px rechts von Start
         this.direction = -1; // Startet nach links
+
+        this.attackSprite = new Image();
+        this.attackSprite.src = '../img/Small_Mushroom/Small_Mushroom_attack.png';
+        this.attackSprite.onload = () => {
+            // Berechne frameWidth für Attack Sprite (6 Frames)
+            this.frameWidth = this.attackSprite.width / 4;
+            this.frameHeight = this.attackSprite.height;
+            // console.log(`Attack sprite loaded, frameWidth: ${this.frameWidth}`);
+        };
         
         // console.log(`Mushroom created at x:${x}, boundaries: ${this.leftBoundary} - ${this.rightBoundary}`);
     }
@@ -53,7 +65,24 @@ class SmallMushroom extends MovableObject {
         this.otherDirection = (this.direction === 1);
         // console.log(`Mushroom turned around at x:${this.x}, new direction:${this.direction}`);
     }
-}
+} 
+
+    attackEnemy() {
+        if (!this.isAttacking) {
+            this.isAttacking = true;
+            this.img = this.attackSprite;
+            this.frameWidth = this.attackSprite.width / 4;
+            this.frameHeight = this.attackSprite.height;
+            this.totalFrames = 4;
+            this.currentFrame = 0;
+
+            // Timer um Attack zu beenden
+            setTimeout(() => {
+                this.isAttacking = false;
+            }, 400); // 4 Frames * 100ms
+            console.log("Attack initiated");
+        }
+    }
 
     startWalking() {
         this.isWalking = true;
@@ -66,7 +95,6 @@ class SmallMushroom extends MovableObject {
     stopWalking() {
         this.isWalking = false;
         this.isMoving = false;
-        this.img = this.idleSprite; // Zurück zum Idle Sprite
-        this.currentFrame = 0;
+        // console.log("SmallMushroom stopped walking at x:", this.x);
     }
 }

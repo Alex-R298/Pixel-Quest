@@ -25,15 +25,49 @@ class World {
     checkCollisions() {
         setInterval(() => {
             this.level.enemies.forEach(enemy => {
-                if (this.character.isColliding(enemy)) {
-                    console.log("Collision detected!", enemy);
-                    this.character.takeDamage(34); // Fester Schaden von 34
-                    this.statusBar.setPercentage(this.character.energy);
-                    console.log("Character energy:", this.character.energy);
-                }
+                this.checkAttackEnemy(enemy);
+                this.damageToEnemies();
             });
         }, 1000);
     }
+
+    // checkAttackEnemy(enemy) {
+    //     if (enemy.isColliding(this.character)) {
+    //         enemy.attackEnemy();
+    //         enemy.stopWalking();
+    //     } else {
+    //         enemy.isAttacking = false;
+    //         enemy.startWalking();
+    //     }
+    // }
+
+    checkAttackEnemy(enemy) {
+    if (enemy.isColliding(this.character)) {
+        if (!enemy.isAttacking) {
+            enemy.attackEnemy();
+           enemy.stopWalking();
+        }
+        
+        // ✅ Schaden nur wenn Gegner attackiert
+        if (enemy.isAttacking) {
+            this.character.takeDamage(0.5); // Schaden an Charakter
+            this.statusBar.setPercentage(this.character.energy);
+        }
+    } else {
+        enemy.isAttacking = false;
+        enemy.startWalking();
+    }
+}
+
+    damageToEnemies() {
+    this.level.enemies.forEach(enemy => {
+        if (this.character.isColliding(enemy) && this.character.isAttacking) {
+            enemy.takeDamage(50);
+
+            console.log("Enemy took damage, energy:", enemy.energy);
+        }
+    });
+}
 
     startEnemyMovement() {
         this.level.enemies.forEach(enemy => {
@@ -51,12 +85,14 @@ class World {
 
         this.character.animate();
         this.level.enemies.forEach(enemy => {
-            // Bewegung (Position ändern)
-            if (enemy.isMoving || enemy.isWalking) {
-                enemy.move(); // Bewege nach links
-                enemy.animateEnemy();
-            }
-        });
+                if (enemy.isAttacking) {
+        // Nur Attack-Animation, keine Bewegung
+        enemy.animateEnemy();
+    } else if (enemy.isMoving || enemy.isWalking) {
+        enemy.move();
+        enemy.animateEnemy();
+    }
+});
 
          this.energyBar.setPercentageEnergy(this.character.energyGreen);
 
