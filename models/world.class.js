@@ -22,51 +22,89 @@ class World {
         this.character.world = this;
     }
 
-    checkCollisions() {
-        setInterval(() => {
-            this.level.enemies.forEach(enemy => {
-                this.checkAttackEnemy(enemy);
-                this.damageToEnemies();
-            });
-        }, 1000);
-    }
+//     checkCollisions() {
+//         setInterval(() => {
+//             this.level.enemies.forEach(enemy => {
+//                 this.checkAttackEnemy(enemy);
+//                 this.damageToEnemies();
+//             });
+//         }, 1000);
+//     }
 
-    // checkAttackEnemy(enemy) {
-    //     if (enemy.isColliding(this.character)) {
-    //         enemy.attackEnemy();
-    //         enemy.stopWalking();
-    //     } else {
-    //         enemy.isAttacking = false;
-    //         enemy.startWalking();
-    //     }
-    // }
+//     // checkAttackEnemy(enemy) {
+//     //     if (enemy.isColliding(this.character)) {
+//     //         enemy.attackEnemy();
+//     //         enemy.stopWalking();
+//     //     } else {
+//     //         enemy.isAttacking = false;
+//     //         enemy.startWalking();
+//     //     }
+//     // }
 
-    checkAttackEnemy(enemy) {
-    if (enemy.isColliding(this.character)) {
-        if (!enemy.isAttacking) {
-            enemy.attackEnemy();
-           enemy.stopWalking();
-        }
+//     checkAttackEnemy(enemy) {
+//     if (enemy.isColliding(this.character)) {
+//         if (!enemy.isAttacking) {
+//             enemy.attackEnemy();
+//            enemy.stopWalking();
+//         }
         
-        // ✅ Schaden nur wenn Gegner attackiert
-        if (enemy.isAttacking) {
-            this.character.takeDamage(0.5); // Schaden an Charakter
-            this.statusBar.setPercentage(this.character.energy);
+//         // ✅ Schaden nur wenn Gegner attackiert
+//         if (enemy.isAttacking) {
+//             this.character.takeDamage(0.5); // Schaden an Charakter
+//             this.statusBar.setPercentage(this.character.energy);
+//         }
+//     } else {
+//         enemy.isAttacking = false;
+//         enemy.startWalking();
+//     }
+// }
+
+//     damageToEnemies() {
+//     this.level.enemies.forEach(enemy => {
+//         if (this.character.isColliding(enemy) && this.character.isAttacking) {
+//             enemy.takeDamage(50);
+
+//             console.log("Enemy took damage, energy:", enemy.energy);
+//         }
+//     });
+// }
+
+checkCollisions() {
+    setInterval(() => {
+        this.level.enemies.forEach(enemy => {
+            this.checkAttackEnemy(enemy);
+            this.damageToEnemies(enemy); // ✅ enemy als Parameter übergeben
+        });
+    }, 1000);
+}
+
+checkAttackEnemy(enemy) {
+    // ✅ Nur wenn Gegner NICHT tot ist
+    if (!enemy.isDead) {
+        if (enemy.isColliding(this.character)) {
+            if (!enemy.isAttacking) {
+                enemy.attackEnemy();
+                enemy.stopWalking();
+            }
+            
+            // ✅ Schaden nur wenn Gegner attackiert UND Character nicht tot
+            if (enemy.isAttacking && !this.character.isDead) {
+                this.character.takeDamage(0.5);
+                this.statusBar.setPercentage(this.character.energy);
+            }
+        } else {
+            enemy.isAttacking = false;
+            enemy.startWalking();
         }
-    } else {
-        enemy.isAttacking = false;
-        enemy.startWalking();
     }
 }
 
-    damageToEnemies() {
-    this.level.enemies.forEach(enemy => {
-        if (this.character.isColliding(enemy) && this.character.isAttacking) {
-            enemy.takeDamage(50);
-
-            console.log("Enemy took damage, energy:", enemy.energy);
-        }
-    });
+damageToEnemies(enemy) {
+    // ✅ HIER kommt dein Code rein - mit hit() statt takeDamage()
+    if (this.character.isColliding(enemy) && this.character.isAttacking && !enemy.isDead) {
+        enemy.takeDamage(50); // ✅ hit() Methode aufrufen (nicht takeDamage)
+        console.log("Enemy hit! Energy:", enemy.energy);
+    }
 }
 
     startEnemyMovement() {

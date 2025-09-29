@@ -190,7 +190,7 @@ class Endboss extends MovableObject {
         this.y = y;
         this.width = 160;
         this.height = 160;
-        this.totalFrames = 4; // Standard für Idle
+        this.totalFrames = 6; // Walking hat 6 Frames
         this.speed = 0.15 + Math.random() * 0.25;
         this.leftBoundary = x - 150;
         this.rightBoundary = x + 150;
@@ -206,6 +206,8 @@ class Endboss extends MovableObject {
                 return;
             }
             this.isDead = true;
+            this.isMoving = false; // ✅ Bewegung stoppen
+            this.isWalking = false; // ✅ Walking stoppen
             this.img = this.deadSprite;
             this.frameWidth = this.deadSprite.width / 4;
             this.frameHeight = this.deadSprite.height;
@@ -216,20 +218,20 @@ class Endboss extends MovableObject {
 
         // Nur andere Logic wenn nicht tot
         if (!this.isDead) {
-            // 2. Attack Check
-            if (this.isAttacking && this.attackSprite.complete) {
-                this.img = this.attackSprite;
-                this.frameWidth = this.attackSprite.width / 4;
-                this.frameHeight = this.attackSprite.height;
-                this.totalFrames = 4;
-            }
-            // 3. Hurt Check
-            else if (this.isHurt && this.hurtSprite.complete) {
+            // 2. Hurt Check - HÖCHSTE PRIORITÄT
+            if (this.isHurt && this.hurtSprite.complete) {
                 this.img = this.hurtSprite;
                 this.frameWidth = this.hurtSprite.width / 4;
                 this.frameHeight = this.hurtSprite.height;
                 this.totalFrames = 4;
                 console.log("Showing hurt animation");
+            }
+            // 3. Attack Check
+            else if (this.isAttacking && this.attackSprite.complete) {
+                this.img = this.attackSprite;
+                this.frameWidth = this.attackSprite.width / 4;
+                this.frameHeight = this.attackSprite.height;
+                this.totalFrames = 4;
             }
             // 4. Walking (Standard wenn nichts anderes)
             else {
@@ -243,22 +245,22 @@ class Endboss extends MovableObject {
             }
         }
 
-        // 6. Frame Animation läuft IMMER
+        // 5. Frame Animation läuft IMMER
         const currentTime = Date.now();
         if (currentTime - this.lastFrameTime >= this.animationSpeed) {
             if (this.isDead) {
                 if (this.currentFrame < this.totalFrames - 1) {
                     this.currentFrame++;
                 }
-                // Stoppt bei letztem Frame
             } else if (this.isHurt || this.isAttacking) {
                 // Hurt/Attack Animation nur einmal abspielen
                 if (this.currentFrame < this.totalFrames - 1) {
                     this.currentFrame++;
                 } else {
-                    // Animation fertig - zurück zu Walking
+                    // Animation fertig
                     if (this.isHurt) {
                         this.isHurt = false;
+                        this.startWalking(); // ✅ Zurück zum Laufen
                         console.log("Hurt animation finished");
                     }
                     if (this.isAttacking) {
@@ -267,7 +269,7 @@ class Endboss extends MovableObject {
                     this.currentFrame = 0;
                 }
             } else {
-                // Normale Animation (Walking/Idle) - endlos wiederholen
+                // Normale Animation (Walking) - endlos wiederholen
                 this.currentFrame++;
                 if (this.currentFrame >= this.totalFrames) {
                     this.currentFrame = 0;
@@ -278,17 +280,33 @@ class Endboss extends MovableObject {
     }
 
     move() {
-        this.x += this.speed * this.direction;
-        
-        // Richtung umkehren bei Grenzen
-        if (this.x <= this.leftBoundary || this.x >= this.rightBoundary) {
-            this.direction *= -1;
-            this.otherDirection = (this.direction === 1);
+        // ✅ NUR bewegen wenn nicht tot
+        if (!this.isDead) {
+            this.x += this.speed * this.direction;
+            
+            // Richtung umkehren bei Grenzen
+            if (this.x <= this.leftBoundary || this.x >= this.rightBoundary) {
+                this.direction *= -1;
+                this.otherDirection = (this.direction === 1);
+            }
         }
     }
 
+    takeDamage(damage) {
+        if (this.isDead) return; // Kein Schaden wenn schon tot
+        
+        this.energy -= damage;
+        this.isHurt = true;
+        this.currentFrame = 0; // Animation von vorne starten
+        
+        console.log("Endboss took damage:", damage, "Energy:", this.energy);
+        
+        // ✅ WICHTIG: Stoppe die Bewegung während hurt
+        this.stopWalking();
+    }
+
     attackEnemy() {
-        if (!this.isAttacking) {
+        if (!this.isAttacking && !this.isDead) { // ✅ Nicht attackieren wenn tot
             this.isAttacking = true;
             this.currentFrame = 0;
             console.log("Endboss attack initiated");
@@ -296,9 +314,11 @@ class Endboss extends MovableObject {
     }
 
     startWalking() {
-        this.isWalking = true;
-        this.isMoving = true;
-        this.currentFrame = 0;
+        if (!this.isDead) { // ✅ Nicht laufen wenn tot
+            this.isWalking = true;
+            this.isMoving = true;
+            this.currentFrame = 0;
+        }
     }
 
     stopWalking() {
