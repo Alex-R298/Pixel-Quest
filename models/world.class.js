@@ -7,6 +7,7 @@ class World {
     camera_x = 0;
     statusBar = new StatusBar();
     energyBar = new EnergyBar();
+    coin = new Coin();
 
     constructor(canvas, keyboard) {
         this.ctx = canvas.getContext('2d');
@@ -71,11 +72,21 @@ class World {
 
 checkCollisions() {
     setInterval(() => {
+            this.checkCollectibles(); // ✅ Checke sammelbare Items
         this.level.enemies.forEach(enemy => {
             this.checkAttackEnemy(enemy);
             this.damageToEnemies(enemy); // ✅ enemy als Parameter übergeben
         });
     }, 1000);
+}
+
+checkCollectibles() {
+    this.level.collectibleItems.forEach((item, index) => {
+        if (this.character.isColliding(item)) {
+            this.coin.collectedCoins++;  // ✅ Zähler erhöhen
+            this.level.collectibleItems.splice(index, 1);  // Item entfernen
+        }
+    });
 }
 
 checkAttackEnemy(enemy) {
@@ -134,38 +145,43 @@ damageToEnemies(enemy) {
 
          this.energyBar.setPercentageEnergy(this.character.energyGreen);
 
-         this.ctx.translate(this.camera_x, 0);
-        
-        // RICHTIGE REIHENFOLGE (von hinten nach vorne):
-        
-        // 1. Background Objects (ganz hinten)
-        this.addObjectsToMap(this.level.backgroundObjects);
+    this.ctx.translate(this.camera_x, 0);
+    
+    // 1. Background Objects (ganz hinten)
+    this.addObjectsToMap(this.level.backgroundObjects);
 
+    // 2. Clouds (Hintergrund-Wolken)
+    this.addObjectsToMap(this.level.clouds);
 
-        // 2. Clouds (Hintergrund-Wolken)
-        this.addObjectsToMap(this.level.clouds);
+    // 3. Collectible Items (Münzen)
+    this.addObjectsToMap(this.level.collectibleItems);  // ✅ HIER!
 
-        // 3. Character (Spielfigur)
-        this.addToMap(this.character);
-        
-        // 4. Enemies (Gegner - vorne)
-        this.addObjectsToMap(this.level.enemies);
-        this.ctx.translate(-this.camera_x, 0); // Kamera zurücksetzen
+    // 4. Character (Spielfigur)
+    this.addToMap(this.character);
+    
+    // 5. Enemies (Gegner - vorne)
+    this.addObjectsToMap(this.level.enemies);
+    
+    this.ctx.translate(-this.camera_x, 0); // Kamera zurücksetzen
 
-        this.addToMap(this.statusBar);
-        this.addToMap(this.energyBar);
+    // UI-Elemente (fixiert am Bildschirm)
+    this.addToMap(this.statusBar);
+    this.addToMap(this.energyBar);
+    this.addToMap(this.coin);
 
-        let self = this;
-        requestAnimationFrame(function() {
-            self.draw();
-        });
-    }
+    let self = this;
+    requestAnimationFrame(function() {
+        self.draw();
+    });
+}
 
     addObjectsToMap(objects) {
         objects.forEach(o => {
             this.addToMap(o);
         });
     }
+
+    
 
     addToMap(mo) {
         if (mo.otherDirection) {
@@ -179,6 +195,8 @@ damageToEnemies(enemy) {
             this.flipImageBack(mo);
         }
     }
+
+   
 
     flipImage(mo) {
         this.ctx.save();

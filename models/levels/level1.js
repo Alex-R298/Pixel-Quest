@@ -14,6 +14,13 @@ const level1 = new Level(
     ],
 
     [
+        new CollectibleItem(160, 380),
+        new CollectibleItem(200, 340),
+        new CollectibleItem(240, 340),
+        new CollectibleItem(280, 380),
+    ],
+
+    [
         new BackgroundObject('../img/Background/Layers/8.png', 0),
         new BackgroundObject('../img/Background/Layers/7.png', 0),
         new BackgroundObject('../img/Background/Layers/6.png', 0),

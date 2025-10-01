@@ -60,7 +60,7 @@ class Character extends MovableObject {
         };
 
         this.attackSprite = new Image();
-        this.attackSprite.src = '../img/Owlet_Monster/Attack1.png';
+        this.attackSprite.src = '../img/Owlet_Monster/Attack2.png';
         this.attackSprite.onload = () => {
             console.log('Attack sprite loaded');
         };

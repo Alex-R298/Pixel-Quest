@@ -51,6 +51,7 @@ class DrawableObject {
         }
     }
 
+
     loadImages(arr) {
         arr.forEach((path) => {
             const img = new Image();
