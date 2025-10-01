@@ -29,12 +29,25 @@ class MovableObject extends DrawableObject {
 
 
 
+    // isColliding(mo) {
+    //     return this.x + this.width > mo.x &&
+    //            this.y + this.height > mo.y &&
+    //            this.x < mo.x + mo.width &&
+    //            this.y < mo.y + mo.height;
+    // }
+
     isColliding(mo) {
-        return this.x + this.width > mo.x &&
-               this.y + this.height > mo.y &&
-               this.x < mo.x + mo.width &&
-               this.y < mo.y + mo.height;
-    }
+    // Hitbox-Offsets berücksichtigen
+    const thisOffset = this.hitboxOffset || { x: 0, y: 0, width: 0, height: 0 };
+    const moOffset = mo.hitboxOffset || { x: 0, y: 0, width: 0, height: 0 };
+    
+    return (
+        this.x + thisOffset.x + this.width + thisOffset.width > mo.x + moOffset.x &&
+        this.y + thisOffset.y + this.height + thisOffset.height > mo.y + moOffset.y &&
+        this.x + thisOffset.x < mo.x + moOffset.x + mo.width + moOffset.width &&
+        this.y + thisOffset.y < mo.y + moOffset.y + mo.height + moOffset.height
+    );
+}
 
 
 

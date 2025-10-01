@@ -137,10 +137,11 @@ class SmallMushroom extends MovableObject {
     rightBoundary = 0;
     direction = -1;
     energy = 100;
+    hitboxOffset = { x: 20, y: 10, width: -15, height: -10 };
 
     constructor(x, y) {
         super();
-
+        this.hasDealtDamage = false;
         // Walking Sprite laden
         this.walkingSprite = new Image();
         this.walkingSprite.src = '../img/Small_Mushroom/Small_Mushroom_walk.png';

@@ -70,14 +70,26 @@ class World {
 //     });
 // }
 
+
 checkCollisions() {
+    // ✅ Münzen alle 100ms prüfen (schnelle Reaktion)
     setInterval(() => {
-            this.checkCollectibles(); // ✅ Checke sammelbare Items
+        this.checkCollectibles();
+    }, 100);
+    
+    // ✅ Gegner-Angriffe alle 1000ms prüfen
+    setInterval(() => {
         this.level.enemies.forEach(enemy => {
-            this.checkAttackEnemy(enemy);
-            this.damageToEnemies(enemy); // ✅ enemy als Parameter übergeben
+            this.checkEnemyAttack(enemy);
         });
     }, 1000);
+    
+    // ✅ Spieler-Schaden alle 200ms prüfen (schnellere Reaktion!)
+    setInterval(() => {
+        this.level.enemies.forEach(enemy => {
+            this.damageToEnemies(enemy);
+        });
+    }, 200);
 }
 
 checkCollectibles() {
@@ -89,32 +101,57 @@ checkCollectibles() {
     });
 }
 
-checkAttackEnemy(enemy) {
-    // ✅ Nur wenn Gegner NICHT tot ist
+checkEnemyAttack(enemy) {
+    // Nur wenn Gegner nicht tot ist
     if (!enemy.isDead) {
         if (enemy.isColliding(this.character)) {
+            // Gegner startet Attack-Animation wenn er nicht bereits angreift
             if (!enemy.isAttacking) {
                 enemy.attackEnemy();
                 enemy.stopWalking();
-            }
-            
-            // ✅ Schaden nur wenn Gegner attackiert UND Character nicht tot
-            if (enemy.isAttacking && !this.character.isDead) {
-                this.character.takeDamage(0.5);
-                this.statusBar.setPercentage(this.character.energy);
+                
+                // ✅ Schaden kommt SPÄTER (bei Frame 2 der Animation)
+                if (!enemy.hasDealtDamage) {
+                    enemy.hasDealtDamage = true;
+                    
+                    // Warte bis Animation bei "Schlag-Frame" ist
+                    setTimeout(() => {
+                        // Prüfe ob immer noch in Reichweite
+                        if (enemy.isColliding(this.character) && 
+                            !this.character.isDead && 
+                            !this.character.isHurt) {
+                            this.character.takeDamage(10);
+                            this.statusBar.setPercentage(this.character.energy);
+                        }
+                        
+                        // Nach 1 Sekunde kann wieder angegriffen werden
+                        setTimeout(() => {
+                            enemy.hasDealtDamage = false;
+                        }, 1000);
+                    }, 300); // 300ms = Schlag kommt bei Frame 2
+                }
             }
         } else {
+            // Gegner hört auf zu attackieren wenn Character weg ist
             enemy.isAttacking = false;
+            enemy.hasDealtDamage = false;
             enemy.startWalking();
         }
     }
 }
 
 damageToEnemies(enemy) {
-    // ✅ HIER kommt dein Code rein - mit hit() statt takeDamage()
-    if (this.character.isColliding(enemy) && this.character.isAttacking && !enemy.isDead) {
-        enemy.takeDamage(50); // ✅ hit() Methode aufrufen (nicht takeDamage)
+    // Prüfe ob Character trifft UND Gegner nicht bereits hurt ist
+    if (this.character.isColliding(enemy) && 
+        this.character.isAttacking && 
+        !enemy.isDead && 
+        !enemy.isHurt) {  // ✅ Wichtig: Nur treffen wenn Gegner nicht bereits hurt
+        
+        enemy.takeDamage(50);
         console.log("Enemy hit! Energy:", enemy.energy);
+        
+        // enemy.isHurt wird in animateEnemy() automatisch zurückgesetzt
+        // Das verhindert mehrfache Treffer pro Attack
     }
 }
 
@@ -157,10 +194,11 @@ damageToEnemies(enemy) {
     this.addObjectsToMap(this.level.collectibleItems);  // ✅ HIER!
 
     // 4. Character (Spielfigur)
-    this.addToMap(this.character);
     
     // 5. Enemies (Gegner - vorne)
     this.addObjectsToMap(this.level.enemies);
+
+     this.addToMap(this.character);
     
     this.ctx.translate(-this.camera_x, 0); // Kamera zurücksetzen
 

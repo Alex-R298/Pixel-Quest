@@ -154,10 +154,11 @@ class Endboss extends MovableObject {
     rightBoundary = 0;
     direction = -1;
     energy = 250;
+    hitboxOffset = { x: 15, y: 30, width: 15, height: -30 };
 
     constructor(x, y) {
         super();
-
+        this.hasDealtDamage = false;
         // Walking Sprite laden
         this.walkingSprite = new Image();
         this.walkingSprite.src = '../img/Huge mushroom/HugeMushroom_walk.png';

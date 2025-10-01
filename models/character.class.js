@@ -14,6 +14,7 @@ class Character extends MovableObject {
     isDead = false;
     isHurt = false;
     deathAnimationComplete = false;
+    hitboxOffset = { x: -5, y: 20, width: -5, height: -20 };
 
     constructor() {
         super();

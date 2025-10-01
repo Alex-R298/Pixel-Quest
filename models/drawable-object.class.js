@@ -62,14 +62,32 @@ class DrawableObject {
         });
     }
 
-    drawFrame(ctx) {
+//     drawFrame(ctx) {
+//     if (this instanceof Character || this instanceof Endboss || this instanceof SmallMushroom) {
+//         ctx.beginPath();
+//         ctx.lineWidth = '5';
+//         ctx.strokeStyle = 'red';
+//         ctx.rect(this.x, this.y, this.width, this.height);
+//         ctx.stroke();
+//     }
+// } 
+
+drawFrame(ctx) {
     if (this instanceof Character || this instanceof Endboss || this instanceof SmallMushroom) {
         ctx.beginPath();
-        ctx.lineWidth = '5';
+        ctx.lineWidth = '2';
         ctx.strokeStyle = 'red';
-        ctx.rect(this.x+30, this.y, this.width -30, this.height);
+        
+        const offset = this.hitboxOffset || { x: 0, y: 0, width: 0, height: 0 };
+        
+        ctx.rect(
+            this.x + offset.x, 
+            this.y + offset.y, 
+            this.width + offset.width, 
+            this.height + offset.height
+        );
         ctx.stroke();
     }
-} 
+}
 
 }
