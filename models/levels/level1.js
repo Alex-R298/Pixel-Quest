@@ -162,11 +162,13 @@ const level1 = new Level(
     
 
     [
-        new Platform(null, 0, 420, 540, 20),
-        new Platform(null, 660, 420, 780, 20),
-        new Platform(null, 480, 240, 240, 20),
-        new Platform(null, 1440, 420, 1440, 20),
-        new Platform(null, 1140, 180, 360, 20),
+    new Platform(null, 0, 420, 180, 20),        // Anfang bis erste Lücke
+    new Platform(null, 300, 420, 240, 20),      // Nach Lücke
+    new Platform(null, 1800, 420, 1140, 20),    // Bis Ende
+    new Platform(null, 420, 240, 420, 20),      // Erhöht
+    new Platform(null, 1140, 180, 360, 20), 
+    new Platform(null, 960, 420, 420, 20),
+    new Platform(null, 1620, 240, 240, 20), 
     ],
     
     [

@@ -1,136 +1,144 @@
 class MovableObject extends DrawableObject {
-        speed = 0.15;
-        otherDirection = false;
-        speedY = 0;
-        acceleration = 0.2; // Schwerkraft
-        energy = 100;
-        energyGreen = 100;
+    speed = 0.15;
+    otherDirection = false;
+    speedY = 0;
+    acceleration = 0.2;
+    energy = 100;
+    energyGreen = 100;
 
     applyGravity() {
-    if (this.isAboveGround() || this.speedY < 0) {
-        this.y += this.speedY;
-        this.speedY += this.acceleration;
-        this.checkPlatformCollision();
-    } else {
-        if (this.isJumping) {
-            this.isJumping = false;
-            this.speedY = 0;
-            this.y = this.world?.level?.groundY || 340; // Verwende Level.groundY oder Fallback
-            // ✅ Lass animate() den richtigen Sprite wählen
-            this.animate();
+        if (this.isClimbing) return;
+        
+        if (this.checkDeath()) return;
+        
+        const onPlatform = this.checkPlatformCollision();
+        
+        if (onPlatform) {
+            this.landOnPlatform();
+        } else {
+            this.fall();
         }
     }
-}
 
+    checkDeath() {
+        const deathY = 600;
+        if (this.y > deathY) {
+            this.energy = 0;
+            this.isDead = true;
+            return true;
+        }
+        return false;
+    }
 
-        isAboveGround() {
-        // Prüfe ob Character über Boden ODER Platform ist
+    landOnPlatform() {
+        this.speedY = 0;
+        this.isJumping = false;
+    }
+
+    fall() {
+        this.y += this.speedY;
+        this.speedY += this.acceleration;
+    }
+
+    isAboveGround() {
         if (this.world && this.world.level.platforms) {
             for (let platform of this.world.level.platforms) {
-                if (this.x + this.width > platform.x && 
-                    this.x < platform.x + platform.width &&
-                    Math.abs((this.y + this.height) - platform.y) < 5) {
-                    return false; // Steht auf Platform
+                if (this.isOnPlatform(platform)) {
+                    return false;
                 }
             }
         }
         return this.y < (this.world?.level?.groundY || 340);
     }
 
-
-     checkPlatformCollision() {
-        // Prüfe Kollision mit allen Plattformen
-        if (this.world && this.world.level.platforms) {
-            for (let platform of this.world.level.platforms) {
-                // Character fällt auf Plattform?
-                if (this.speedY >= 0 && // Fällt nach unten oder steht
-                    this.x + this.width > platform.x &&
-                    this.x < platform.x + platform.width &&
-                    this.y + this.height <= platform.y + 10 &&
-                    this.y + this.height >= platform.y - 10) {
-                    
-                    // Auf Platform landen
-                    this.y = platform.y - this.height;
-                    this.speedY = 0;
-                    this.isJumping = false;
-                    break;
-                }
-            }
-        }
+    isOnPlatform(platform) {
+        return this.x + this.width > platform.x && 
+               this.x < platform.x + platform.width &&
+               Math.abs((this.y + this.height) - platform.y) < 5;
     }
 
+    checkPlatformCollision() {
+        if (!this.world || !this.world.level.platforms) return false;
+        
+        for (let platform of this.world.level.platforms) {
+            if (this.isCollidingWithPlatform(platform)) {
+                this.snapToPlatform(platform);
+                return true;
+            }
+        }
+        return false;
+    }
 
+    isCollidingWithPlatform(platform) {
+        return this.speedY >= 0 &&
+               this.x + this.width > platform.x + 10 &&
+               this.x < platform.x + platform.width - 10 &&
+               this.y + this.height >= platform.y - 5 &&
+               this.y + this.height <= platform.y + 20;
+    }
 
-
-    // isColliding(mo) {
-    //     return this.x + this.width > mo.x &&
-    //            this.y + this.height > mo.y &&
-    //            this.x < mo.x + mo.width &&
-    //            this.y < mo.y + mo.height;
-    // }
+    snapToPlatform(platform) {
+        this.y = platform.y - this.height;
+        this.speedY = 0;
+        this.isJumping = false;
+    }
 
     isColliding(mo) {
-    // Hitbox-Offsets berücksichtigen
-    const thisOffset = this.hitboxOffset || { x: 0, y: 0, width: 0, height: 0 };
-    const moOffset = mo.hitboxOffset || { x: 0, y: 0, width: 0, height: 0 };
-    
-    return (
-        this.x + thisOffset.x + this.width + thisOffset.width > mo.x + moOffset.x &&
-        this.y + thisOffset.y + this.height + thisOffset.height > mo.y + moOffset.y &&
-        this.x + thisOffset.x < mo.x + moOffset.x + mo.width + moOffset.width &&
-        this.y + thisOffset.y < mo.y + moOffset.y + mo.height + moOffset.height
-    );
-}
+        const thisOffset = this.hitboxOffset || { x: 0, y: 0, width: 0, height: 0 };
+        const moOffset = mo.hitboxOffset || { x: 0, y: 0, width: 0, height: 0 };
+        
+        return this.checkHitboxOverlap(thisOffset, moOffset, mo);
+    }
 
-
+    checkHitboxOverlap(thisOffset, moOffset, mo) {
+        return (
+            this.x + thisOffset.x + this.width + thisOffset.width > mo.x + moOffset.x &&
+            this.y + thisOffset.y + this.height + thisOffset.height > mo.y + moOffset.y &&
+            this.x + thisOffset.x < mo.x + moOffset.x + mo.width + moOffset.width &&
+            this.y + thisOffset.y < mo.y + moOffset.y + mo.height + moOffset.height
+        );
+    }
 
     takeDamage(damage) {
-    if (this.isDead) return; // Kein Schaden wenn schon tot
-    
-    this.energy -= damage;
-    this.isHurt = true;
-    // Timer für Hurt-Animation
-    setTimeout(() => {
-        this.isHurt = false;
-    }, 600); // Hurt-Sprite 500ms anzeigen
-    
-    console.log("Character took damage:", damage, "Energy:", this.energy);
-}
+        if (this.isDead) return;
+        
+        this.energy -= damage;
+        this.isHurt = true;
+        
+        setTimeout(() => {
+            this.isHurt = false;
+        }, 600);
+    }
 
-// isDead() {
-//     return this.energy <= 0;
-// }
-
-        loadImages(arr) {
+    loadImages(arr) {
         arr.forEach((path) => {
             const img = new Image();
             img.src = path;
-            img.onload = () => {
-                console.log(`Cached image loaded: ${path}`);
-            };
             this.imageCache[path] = img;
         });
     }
 
-        animateEnemy() {
-            const currentTime = Date.now();
+    animateEnemy() {
+        const currentTime = Date.now();
 
-            if (currentTime - this.lastFrameTime >= this.animationSpeed) {
-                this.currentFrame++;
-                if (this.currentFrame >= this.totalFrames) {
-                    this.currentFrame = 0; // Zurück zum ersten Frame
-                }
-                this.lastFrameTime = currentTime;
-            }
+        if (currentTime - this.lastFrameTime >= this.animationSpeed) {
+            this.advanceFrame();
+            this.lastFrameTime = currentTime;
         }
+    }
 
-         moveRight() {
-        this.x += this.speed; // ✅ Einfache Bewegung ohne Timer
+    advanceFrame() {
+        this.currentFrame++;
+        if (this.currentFrame >= this.totalFrames) {
+            this.currentFrame = 0;
+        }
+    }
+
+    moveRight() {
+        this.x += this.speed;
     }
 
     moveLeft() {
         this.x -= this.speed;
-
     }
-
 }

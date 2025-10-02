@@ -6,7 +6,7 @@ class Level {
     platforms = []; // Neue Eigenschaft für Plattformen
     ladders = []; // Neue Eigenschaft für Leitern
     level_end_x = 2830;
-    groundY = 340
+    groundY = 600  // Kein Boden mehr - nur Platforms!
 
     constructor(enemies, clouds, collectibleItems, backgroundObjects, platforms, ladders) {  // ✅ Reihenfolge wie in level1.js
         this.enemies = enemies;
