@@ -14,10 +14,23 @@ const level1 = new Level(
     ],
 
     [
-        new CollectibleItem(160, 380),
-        new CollectibleItem(200, 340),
-        new CollectibleItem(240, 340),
-        new CollectibleItem(280, 380),
+        new CollectibleItem(160, 380, 'coin'),
+        new CollectibleItem(200, 340, 'coin'),
+        new CollectibleItem(240, 340, 'coin'),
+        new CollectibleItem(280, 380, 'coin'),
+
+        new CollectibleItem(330, 380, 'food'),
+        new CollectibleItem(440, 200, 'food'),
+        new CollectibleItem(330, 380, 'food'),
+        new CollectibleItem(330, 380, 'food'),
+        new CollectibleItem(330, 380, 'food'),
+        new CollectibleItem(330, 380, 'food'),
+        new CollectibleItem(330, 380, 'food'),
+        new CollectibleItem(330, 380, 'food'),
+        new CollectibleItem(330, 380, 'food'),
+        new CollectibleItem(330, 380, 'food'),
+        new CollectibleItem(330, 380, 'food'),
+        new CollectibleItem(330, 380, 'food'),
     ],
 
     [
@@ -144,5 +157,20 @@ const level1 = new Level(
         new BackgroundObject('../img/Tiles/Tileset/TileSet_02.png', 2760, 60, 60),
         new BackgroundObject('../img/Tiles/Tileset/TileSet_02.png', 2820, 60, 60),
 
+    ],
+
+    
+
+    [
+        new Platform(null, 0, 420, 540, 20),
+        new Platform(null, 660, 420, 780, 20),
+        new Platform(null, 480, 240, 240, 20),
+        new Platform(null, 1440, 420, 1440, 20),
+        new Platform(null, 1140, 180, 360, 20),
+    ],
+    
+    [
+        {x: 480, yBottom: 420, yTop: 240, width: 60},
+        {x: 1260, yBottom: 420, yTop: 180, width: 60},
     ]
 );

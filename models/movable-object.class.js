@@ -10,11 +10,12 @@ class MovableObject extends DrawableObject {
     if (this.isAboveGround() || this.speedY < 0) {
         this.y += this.speedY;
         this.speedY += this.acceleration;
+        this.checkPlatformCollision();
     } else {
         if (this.isJumping) {
             this.isJumping = false;
             this.speedY = 0;
-            this.y = 340;
+            this.y = this.world?.level?.groundY || 340; // Verwende Level.groundY oder Fallback
             // ✅ Lass animate() den richtigen Sprite wählen
             this.animate();
         }
@@ -23,8 +24,40 @@ class MovableObject extends DrawableObject {
 
 
         isAboveGround() {
-            return this.y < 340;
+        // Prüfe ob Character über Boden ODER Platform ist
+        if (this.world && this.world.level.platforms) {
+            for (let platform of this.world.level.platforms) {
+                if (this.x + this.width > platform.x && 
+                    this.x < platform.x + platform.width &&
+                    Math.abs((this.y + this.height) - platform.y) < 5) {
+                    return false; // Steht auf Platform
+                }
+            }
         }
+        return this.y < (this.world?.level?.groundY || 340);
+    }
+
+
+     checkPlatformCollision() {
+        // Prüfe Kollision mit allen Plattformen
+        if (this.world && this.world.level.platforms) {
+            for (let platform of this.world.level.platforms) {
+                // Character fällt auf Plattform?
+                if (this.speedY >= 0 && // Fällt nach unten oder steht
+                    this.x + this.width > platform.x &&
+                    this.x < platform.x + platform.width &&
+                    this.y + this.height <= platform.y + 10 &&
+                    this.y + this.height >= platform.y - 10) {
+                    
+                    // Auf Platform landen
+                    this.y = platform.y - this.height;
+                    this.speedY = 0;
+                    this.isJumping = false;
+                    break;
+                }
+            }
+        }
+    }
 
 
 
@@ -100,45 +133,4 @@ class MovableObject extends DrawableObject {
 
     }
 
-    jump() {
-    if (!this.isJumping && !this.isAboveGround()) {
-        this.isJumping = true;
-        this.speedY = -5; // Anfangsgeschwindigkeit des Sprungs
-        console.log("Jump initiated at y:", this.y);
-        // Jump Sprite wechseln
-        if (this.jumpSprite.complete) {
-            this.img = this.jumpSprite;
-            this.frameWidth = this.jumpSprite.width / 8;
-            this.frameHeight = this.jumpSprite.height;
-            this.totalFrames = 8;
-            this.currentFrame = 0;
-        }
-    }
-
-}
-
-        attack() {
-     if (!this.isAttacking && this.energyGreen > 0) {
-        this.isAttacking = true;
-            console.log("Energy after attack:", this.energyGreen);
-            console.log("Before attack:", this.energyGreen);
-        
-        if (this.attackSprite.complete) {
-            this.img = this.attackSprite;
-            this.frameWidth = this.attackSprite.width / 6;
-            this.frameHeight = this.attackSprite.height;
-            this.totalFrames = 6;
-            this.currentFrame = 0;
-
-            this.energyGreen -= 10; // Dann Energie reduzieren
-        if (this.energyGreen < 0) this.energyGreen = 0;
-        }
-        
-        // Timer um Attack zu beenden
-        setTimeout(() => {
-            this.isAttacking = false;
-        }, 500); // 6 Frames * 100ms
-        console.log("Attack initiated");
-    }
-}
 }

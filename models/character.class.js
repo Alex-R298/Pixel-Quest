@@ -15,10 +15,13 @@ class Character extends MovableObject {
     isHurt = false;
     deathAnimationComplete = false;
     hitboxOffset = { x: -5, y: 20, width: -5, height: -20 };
+    // y = 340; // Startet auf Boden
 
     constructor() {
         super();
         this.upKeyPressed = false;
+        this.energyGreen = 100;
+        this.y = 340; // Startet auf Boden
         
         // Idle Sprite laden
         this.idleSprite = new Image();
@@ -219,4 +222,87 @@ if (currentTime - this.lastFrameTime >= this.animationSpeed) {
     this.lastFrameTime = currentTime;
 }
     } 
+
+    jump() {
+    if (!this.isJumping && !this.isAboveGround()) {
+        this.isJumping = true;
+        this.speedY = -5; // Anfangsgeschwindigkeit des Sprungs
+        console.log("Jump initiated at y:", this.y);
+        // Jump Sprite wechseln
+        if (this.jumpSprite.complete) {
+            this.img = this.jumpSprite;
+            this.frameWidth = this.jumpSprite.width / 8;
+            this.frameHeight = this.jumpSprite.height;
+            this.totalFrames = 8;
+            this.currentFrame = 0;
+        }
+    }
+
+}
+
+        attack() {
+     if (!this.isAttacking && this.energyGreen > 0) {
+        this.isAttacking = true;
+            console.log("Energy after attack:", this.energyGreen);
+            console.log("Before attack:", this.energyGreen);
+        
+        if (this.attackSprite.complete) {
+            this.img = this.attackSprite;
+            this.frameWidth = this.attackSprite.width / 6;
+            this.frameHeight = this.attackSprite.height;
+            this.totalFrames = 6;
+            this.currentFrame = 0;
+
+            this.energyGreen -= 10; // Dann Energie reduzieren
+        if (this.energyGreen < 0) this.energyGreen = 0;
+        }
+        
+        // Timer um Attack zu beenden
+        setTimeout(() => {
+            this.isAttacking = false;
+        }, 500); // 6 Frames * 100ms
+        console.log("Attack initiated");
+    }
+}
+
+    
+    
+
+    climbLadder() {
+        if (!this.world || !this.world.level.ladders) return;
+        
+        // Prüfe ob Character bei einer Leiter ist
+        for (let ladder of this.world.level.ladders) {
+            if (this.x + this.width/2 > ladder.x && 
+                this.x + this.width/2 < ladder.x + ladder.width &&
+                this.y + this.height >= ladder.yTop &&
+                this.y + this.height <= ladder.yBottom + 60) {
+                
+                // Character ist bei Leiter!
+                this.isClimbing = true;
+                this.speedY = 0; // Keine Gravity während klettern
+                
+                // Nach oben klettern
+                if (this.world.keyboard.UP) {
+                    this.y -= 2;
+                    // Oben angekommen?
+                    if (this.y + this.height <= ladder.yTop) {
+                        this.isClimbing = false;
+                        this.y = ladder.yTop - this.height;
+                    }
+                }
+                
+                // Nach unten klettern
+                if (this.world.keyboard.DOWN) {
+                    this.y += 2;
+                    if (this.y + this.height >= ladder.yBottom) {
+                        this.isClimbing = false;
+                    }
+                }
+                
+                return; // Keine normale Bewegung während klettern
+            }
+        }
+        this.isClimbing = false;
+    }
 }   

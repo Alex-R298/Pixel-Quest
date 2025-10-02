@@ -9,6 +9,8 @@ function init() {
 }
 
 
+
+
 window.addEventListener('keydown', (e) => {
     if (e.keyCode === 39) keyboard.RIGHT = true;
     if (e.keyCode === 37) keyboard.LEFT = true;
@@ -24,3 +26,5 @@ window.addEventListener('keyup', (e) => {
     if (e.keyCode === 40) keyboard.DOWN = false;
     if (e.keyCode === 32) keyboard.SPACE = false;
 });
+
+window.debugMode = true;

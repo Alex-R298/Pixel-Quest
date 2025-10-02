@@ -3,7 +3,7 @@ class DrawableObject {
     imageCache = {};
     currentImage = 0;
     x = 0;
-    y = 340;
+    y = 0;
     height = 70;
     width = 70;
     currentFrame = 0;
@@ -49,6 +49,27 @@ class DrawableObject {
         if (this.img && this.img.complete) {
             ctx.drawImage(this.img, this.x, this.y, this.width, this.height);
         }
+    }
+
+
+     drawPlatform(ctx) {
+        // Unsichtbare Plattformen nur im Debug-Modus zeigen
+        if (this.invisible) {
+            if (window.debugMode) {
+                ctx.strokeStyle = 'rgba(255, 0, 0, 0.5)';
+                ctx.lineWidth = 2;
+                ctx.strokeRect(this.x, this.y, this.width, this.height);
+            }
+            // Sonst nichts zeichnen
+        } else if (this.img && this.img.complete) {
+            // Nur wenn Bild vorhanden und geladen
+            super.draw(ctx);
+        }
+    }
+    
+    // Override drawFrame damit keine roten Rahmen gezeichnet werden
+    drawFrame(ctx) {
+        // Nichts tun - Platforms brauchen keine Debug-Frames
     }
 
 

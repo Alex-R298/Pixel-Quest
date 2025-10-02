@@ -95,8 +95,26 @@ checkCollisions() {
 checkCollectibles() {
     this.level.collectibleItems.forEach((item, index) => {
         if (this.character.isColliding(item)) {
-            this.coin.collectedCoins++;  // ✅ Zähler erhöhen
-            this.level.collectibleItems.splice(index, 1);  // Item entfernen
+            // Je nach Typ unterschiedlich behandeln
+            if (item.type === 'coin') {
+                this.coin.collectedCoins += item.value;
+                // Item entfernen
+                this.level.collectibleItems.splice(index, 1);
+                item.onCollect(this.character);
+                
+            } else if (item.type === 'food') {
+                // ✅ ZUERST prüfen ob Heilung nötig ist
+                if (this.character.energyGreen < 100) {
+                    // Nur heilen wenn nicht voll
+                    this.character.energyGreen = Math.min(this.character.energyGreen + item.healAmount, 100);
+                    this.energyBar.setPercentageEnergy(this.character.energyGreen);
+                    
+                    // Item entfernen und Effekt abspielen
+                    this.level.collectibleItems.splice(index, 1);
+                    item.onCollect(this.character);
+                }
+                // ✅ Wenn voll: Item NICHT aufnehmen (bleibt liegen)
+            }
         }
     });
 }
@@ -127,7 +145,7 @@ checkEnemyAttack(enemy) {
                         // Nach 1 Sekunde kann wieder angegriffen werden
                         setTimeout(() => {
                             enemy.hasDealtDamage = false;
-                        }, 1000);
+                        }, 2000);
                     }, 300); // 300ms = Schlag kommt bei Frame 2
                 }
             }
@@ -186,6 +204,8 @@ damageToEnemies(enemy) {
     
     // 1. Background Objects (ganz hinten)
     this.addObjectsToMap(this.level.backgroundObjects);
+
+    this.addObjectsToMap(this.level.platforms);
 
     // 2. Clouds (Hintergrund-Wolken)
     this.addObjectsToMap(this.level.clouds);
@@ -247,4 +267,5 @@ damageToEnemies(enemy) {
         this.ctx.restore();
         mo.x = mo.x * -1;
     }
+
 }
