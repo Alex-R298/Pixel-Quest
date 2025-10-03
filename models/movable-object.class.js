@@ -104,6 +104,12 @@ class MovableObject extends DrawableObject {
         
         this.energy -= damage;
         this.isHurt = true;
+            if (this.AUDIO_HURT) {
+        this.AUDIO_HURT.currentTime = 0;
+        this.AUDIO_HURT.volume = 0.1;
+        this.AUDIO_HURT.play();
+    }
+
         
         setTimeout(() => {
             this.isHurt = false;

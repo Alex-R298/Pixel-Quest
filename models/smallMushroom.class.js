@@ -138,6 +138,7 @@ class SmallMushroom extends MovableObject {
     direction = -1;
     energy = 100;
     hitboxOffset = { x: 20, y: 10, width: -15, height: -10 };
+    AUDIO_HURT = new Audio('./audio/enemy-hurt.mp3');
 
     constructor(x, y) {
         super();
@@ -282,6 +283,11 @@ class SmallMushroom extends MovableObject {
     this.energy -= damage;
     this.isHurt = true;
     this.currentFrame = 0; // Animation von vorne starten
+    if (this.AUDIO_HURT) {
+        this.AUDIO_HURT.currentTime = 0;
+        this.AUDIO_HURT.volume = 0.05;
+        this.AUDIO_HURT.play();
+    }
     
     console.log("SmallMushroom took damage:", damage, "Energy:", this.energy);
     

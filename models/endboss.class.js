@@ -155,6 +155,7 @@ class Endboss extends MovableObject {
     direction = -1;
     energy = 250;
     hitboxOffset = { x: 15, y: 30, width: 15, height: -30 };
+    AUDIO_HURT = new Audio('./audio/boss-hurt.mp3');
 
     constructor(x, y) {
         super();
@@ -299,6 +300,11 @@ class Endboss extends MovableObject {
         this.energy -= damage;
         this.isHurt = true;
         this.currentFrame = 0; // Animation von vorne starten
+        if (this.AUDIO_HURT) {
+        this.AUDIO_HURT.currentTime = 0;
+        this.AUDIO_HURT.volume = 0.05;
+        this.AUDIO_HURT.play();
+    }
         
         console.log("Endboss took damage:", damage, "Energy:", this.energy);
         

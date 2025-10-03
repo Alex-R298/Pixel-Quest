@@ -8,6 +8,7 @@ class World {
     statusBar = new StatusBar();
     energyBar = new EnergyBar();
     coin = new Coin();
+    BACKGROUND_MUSIC = new Audio('./audio/background.mp3');
 
     constructor(canvas, keyboard) {
         this.ctx = canvas.getContext('2d');
@@ -17,6 +18,9 @@ class World {
         this.draw();
         this.setWorld();
         this.checkCollisions();
+        this.BACKGROUND_MUSIC.volume = 0.08;
+        this.BACKGROUND_MUSIC.loop = true;
+        this.BACKGROUND_MUSIC.play();
     }
 
     setWorld() {
@@ -256,12 +260,20 @@ damageToEnemies(enemy) {
 
    
 
+    // flipImage(mo) {
+    //     this.ctx.save();
+    //     this.ctx.translate(mo.width, 0);
+    //     this.ctx.scale(-1, 1);
+    //     mo.x = mo.x * -1;
+    // }
+
     flipImage(mo) {
-        this.ctx.save();
-        this.ctx.translate(mo.width, 0);
-        this.ctx.scale(-1, 1);
-        mo.x = mo.x * -1;
-    }
+    this.ctx.save();
+    const displayWidth = mo.renderWidth || mo.width;  // ← Diese Zeile hinzufügen
+    this.ctx.translate(displayWidth, 0);  // ← Hier displayWidth statt mo.width
+    this.ctx.scale(-1, 1);
+    mo.x = mo.x * -1;
+}
 
     flipImageBack(mo) {
         this.ctx.restore();

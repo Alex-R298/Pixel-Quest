@@ -27,17 +27,31 @@ class DrawableObject {
     }
 
 
+    // draw(ctx) {
+    //     if (this.img && this.img.complete && this.frameWidth > 0) {
+    //         // Animierte Objekte mit Sprite Sheet
+    //         const sourceX = this.currentFrame * this.frameWidth;
+    //         const sourceY = 0;
+    //         ctx.drawImage(this.img, sourceX, sourceY, this.frameWidth, this.frameHeight, this.x, this.y, this.width, this.height);
+    //     } else if (this.img && this.img.complete) {
+    //         // Statische Objekte
+    //         ctx.drawImage(this.img, this.x, this.y, this.width, this.height);
+    //     }
+    // }
+
     draw(ctx) {
-        if (this.img && this.img.complete && this.frameWidth > 0) {
-            // Animierte Objekte mit Sprite Sheet
-            const sourceX = this.currentFrame * this.frameWidth;
-            const sourceY = 0;
-            ctx.drawImage(this.img, sourceX, sourceY, this.frameWidth, this.frameHeight, this.x, this.y, this.width, this.height);
-        } else if (this.img && this.img.complete) {
-            // Statische Objekte
-            ctx.drawImage(this.img, this.x, this.y, this.width, this.height);
-        }
+    if (this.img && this.img.complete && this.frameWidth > 0) {
+        const sourceX = this.currentFrame * this.frameWidth;
+        const sourceY = 0;
+        const renderW = this.renderWidth || this.width;   // ← Diese Zeile
+        const renderH = this.renderHeight || this.height; // ← Diese Zeile
+        ctx.drawImage(this.img, sourceX, sourceY, this.frameWidth, this.frameHeight, this.x, this.y, renderW, renderH);
+    } else if (this.img && this.img.complete) {
+        const renderW = this.renderWidth || this.width;   // ← Diese Zeile
+        const renderH = this.renderHeight || this.height; // ← Diese Zeile
+        ctx.drawImage(this.img, this.x, this.y, renderW, renderH);
     }
+}
 
 
     drawStatusBar(ctx) {
