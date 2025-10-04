@@ -1,6 +1,6 @@
 class World {
     character = new Character();
-    level = level1;
+    level;
     canvas;
     ctx;
     keyboard;
@@ -8,12 +8,15 @@ class World {
     statusBar = new StatusBar();
     energyBar = new EnergyBar();
     coin = new Coin();
-    BACKGROUND_MUSIC = new Audio('./audio/background.mp3');
+    // BACKGROUND_MUSIC = new Audio('./audio/background.mp3');
 
     constructor(canvas, keyboard) {
         this.ctx = canvas.getContext('2d');
+        this.level = createLevel1();
         this.canvas = canvas;
         this.keyboard = keyboard;
+        this.intervals = []; // ← Hier hinzufügen
+        this.animationFrame = null;
         this.startEnemyMovement();
         this.draw();
         this.setWorld();
@@ -96,6 +99,7 @@ checkCollisions() {
     }, 200);
 }
 
+
 checkCollectibles() {
     this.level.collectibleItems.forEach((item, index) => {
         if (this.character.isColliding(item)) {
@@ -142,7 +146,7 @@ checkEnemyAttack(enemy) {
                         if (enemy.isColliding(this.character) && 
                             !this.character.isDead && 
                             !this.character.isHurt) {
-                            this.character.takeDamage(10);
+                            this.character.takeDamage(33.4); // 3 Treffer = tot
                             this.statusBar.setPercentage(this.character.energy);
                         }
                         
@@ -235,6 +239,11 @@ damageToEnemies(enemy) {
     requestAnimationFrame(function() {
         self.draw();
     });
+}
+
+cleanup() {
+    cancelAnimationFrame(this.animationFrame);
+    this.intervals.forEach(interval => clearInterval(interval));
 }
 
     addObjectsToMap(objects) {

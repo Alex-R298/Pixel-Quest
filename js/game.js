@@ -58,4 +58,41 @@ window.addEventListener('keyup', (e) => {
     if (e.keyCode === 13) keyboard.ENTER = false;
 });
 
+
+function startGame() {
+    const overlay = document.getElementById('overlay-start-screen');
+    const canvas = document.getElementById('canvas');
+    canvas.style.filter = 'none';
+    overlay.style.display = 'none';
+    init();
+}
+
+function showDeadScreen() {
+    const overlay = document.getElementById('overlay-dead-screen');
+    const canvas = document.getElementById('canvas');
+    canvas.style.filter = 'blur(7px)';
+    overlay.style.display = 'flex';
+    
+}
+
+function showWinScreen() {
+    const overlay = document.getElementById('overlay-win-screen');
+    const canvas = document.getElementById('canvas');
+    canvas.style.filter = 'blur(7px)';
+    overlay.style.display = 'flex';
+    
+}
+
+function restartGame(){
+    const overlay = document.getElementById('overlay-dead-screen');
+    const winOverlay = document.getElementById('overlay-win-screen');
+    overlay.style.display = 'none';
+    winOverlay.style.display = 'none';
+    const canvas = document.getElementById('canvas');
+    canvas.style.filter = 'none';
+    if (world) world.cleanup();
+    world = new World(canvas, keyboard);
+}
+
 window.debugMode = true;
+

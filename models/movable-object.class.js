@@ -25,6 +25,7 @@ class MovableObject extends DrawableObject {
         if (this.y > deathY) {
             this.energy = 0;
             this.isDead = true;
+            showDeadScreen();
             return true;
         }
         return false;

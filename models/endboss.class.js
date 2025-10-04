@@ -216,6 +216,9 @@ class Endboss extends MovableObject {
             this.totalFrames = 4;
             this.currentFrame = 0;
             console.log("Endboss is dead");
+            setTimeout(() => {
+                showWinScreen();
+            }, 1500);
         }
 
         // Nur andere Logic wenn nicht tot
