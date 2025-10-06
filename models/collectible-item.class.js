@@ -64,6 +64,8 @@ class CollectibleItem extends DrawableObject {
         '../img/Objects/Food/Strawberry.png',
         '../img/Objects/Food/Tomato.png'
     ];
+    COIN_SOUND = new Audio('./audio/coin.mp3' , 'coin');
+    FOOD_SOUND = new Audio('./audio/food.mp3', 'food');
 
     constructor(x, y, type = 'coin') {
         super();
@@ -71,7 +73,9 @@ class CollectibleItem extends DrawableObject {
         this.y = y;
         this.type = type;
         this.collectible = true;
-        
+        this.COIN_SOUND.volume = 0.05;
+        this.FOOD_SOUND.volume = 0.05;
+
         if (type === 'coin') {
             this.setupCoin();
         } else if (type === 'food') {
@@ -146,11 +150,11 @@ class CollectibleItem extends DrawableObject {
 
     onCollect(character) {
         if (this.type === 'coin') {
-            // Münze eingesammelt
+            this.COIN_SOUND.play();
             console.log("Coin collected! +1");
             // Sound abspielen, Partikel-Effekt, etc.
         } else if (this.type === 'food') {
-            // Essen eingesammelt - heilt Character
+            this.FOOD_SOUND.play();
             character.energyGreen = Math.min(character.energyGreen + this.healAmount, 100);
             console.log(`Food collected! Healed ${this.healAmount} HP`);
         }
