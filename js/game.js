@@ -106,6 +106,7 @@ function showDeadScreen() {
     const canvas = document.getElementById('canvas');
     canvas.style.filter = 'blur(7px)';
     overlay.style.display = 'flex';
+    playGameOverSound();
     stopGameMusic();
 }
 
@@ -136,6 +137,12 @@ function clickButtonSound() {
     let clickSound = new Audio('./audio/click.mp3');
     clickSound.volume = 0.1;
     clickSound.play();
+}
+
+function playGameOverSound() {
+    let gameOverSound = new Audio('./audio/game-over.mp3');
+    gameOverSound.volume = 0.1;
+    gameOverSound.play();
 }
 
 function stopGameMusic() {
