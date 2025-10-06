@@ -9,7 +9,6 @@ class SmallMushroom extends MovableObject {
     isHurt = false;
     isDead = false;
     walkingSprite = null;
-    idleSprite = null;
     attackSprite = null;
     hurtSprite = null;
     deadSprite = null;
@@ -23,38 +22,14 @@ class SmallMushroom extends MovableObject {
     constructor(x, y) {
         super();
         this.hasDealtDamage = false;
-        // Walking Sprite laden
-        this.walkingSprite = new Image();
-        this.walkingSprite.src = '../img/Small_Mushroom/Small_Mushroom_walk.png';
-        this.walkingSprite.onload = () => {
-            console.log('SmallMushroom walking sprite loaded');
-        };
+        this.initializePosition(x, y);
+        this.loadSprites();
+    }
 
-        // Attack Sprite laden
-        this.attackSprite = new Image();
-        this.attackSprite.src = '../img/Small_Mushroom/Small_Mushroom_attack.png';
-        this.attackSprite.onload = () => {
-            console.log('SmallMushroom attack sprite loaded');
-        };
-
-        // Hurt Sprite laden
-        this.hurtSprite = new Image();
-        this.hurtSprite.src = '../img/Small_Mushroom/Small_Mushroom_hurt.png';
-        this.hurtSprite.onload = () => {
-            console.log('SmallMushroom hurt sprite loaded');
-        };
-
-        // Dead Sprite laden
-        this.deadSprite = new Image();
-        this.deadSprite.src = '../img/Small_Mushroom/Small_Mushroom_death.png';
-        this.deadSprite.onload = () => {
-            console.log('SmallMushroom dead sprite loaded');
-        };
-
+    initializePosition(x, y) {
         this.x = x;
         this.y = y;
-        this.width = 80;
-        this.height = 80;
+        this.currentFrame = 0;
         this.totalFrames = 4;
         this.speed = 0.15 + Math.random() * 0.25;
         this.leftBoundary = x - 60;
@@ -62,130 +37,148 @@ class SmallMushroom extends MovableObject {
         this.direction = -1;
     }
 
+    loadSprites() {
+        this.walkingSprite = this.createSprite('../img/Small_Mushroom/Small_Mushroom_walk.png');
+        this.attackSprite = this.createSprite('../img/Small_Mushroom/Small_Mushroom_attack.png');
+        this.hurtSprite = this.createSprite('../img/Small_Mushroom/Small_Mushroom_hurt.png');
+        this.deadSprite = this.createSprite('../img/Small_Mushroom/Small_Mushroom_death.png');
+        this.img = this.walkingSprite;
+    }
+
+    createSprite(src) {
+        const sprite = new Image();
+        sprite.onload = () => {
+            if (!this.frameWidth) {
+                this.frameWidth = sprite.width / 4;
+                this.frameHeight = sprite.height;
+            }
+        };
+        sprite.src = src;
+        return sprite;
+    }
+
     animateEnemy() {
-    // 1. Death Check
-    if (this.energy <= 0 && !this.isDead) {
-        if (!this.deadSprite || !this.deadSprite.complete) {
-            this.stopWalking();
-            console.log("Dead sprite not loaded!");
-            return;
+        if (this.handleDeath()) return;
+        if (!this.isDead) this.updateSprite();
+        this.advanceFrame();
+    }
+
+    handleDeath() {
+        if (this.energy <= 0 && !this.isDead) {
+            if (!this.deadSprite?.complete) {
+                this.stopWalking();
+                return true;
+            }
+            this.setDeadState();
         }
+        return false;
+    }
+
+    setDeadState() {
         this.isDead = true;
         this.isMoving = false;
         this.isWalking = false;
-        this.img = this.deadSprite;
-        this.frameWidth = this.deadSprite.width / 4;
-        this.frameHeight = this.deadSprite.height;
-        this.totalFrames = 4;
+        this.setSprite(this.deadSprite, 4);
         this.currentFrame = 0;
-        console.log("SmallMushroom is dead");
-        
     }
 
-    // Nur andere Logic wenn nicht tot
-    if (!this.isDead) {
-        // 2. Hurt Check - HÖCHSTE PRIORITÄT
+    updateSprite() {
         if (this.isHurt && this.hurtSprite.complete) {
-            this.img = this.hurtSprite;
-            this.frameWidth = this.hurtSprite.width / 4;
-            this.frameHeight = this.hurtSprite.height;
-            this.totalFrames = 4;
-            console.log("Showing hurt animation");
-        }
-        // 3. Attack Check
-        else if (this.isAttacking && this.attackSprite.complete) {
-            this.img = this.attackSprite;
-            this.frameWidth = this.attackSprite.width / 4;
-            this.frameHeight = this.attackSprite.height;
-            this.totalFrames = 4;
-        }
-        // 4. Walking (Standard wenn nichts anderes)
-        else {
-            if (this.img !== this.walkingSprite) {
-                this.img = this.walkingSprite;
-                this.frameWidth = this.walkingSprite.width / 4;
-                this.frameHeight = this.walkingSprite.height;
-                this.totalFrames = 4;
-                this.currentFrame = 0;
-            }
+            this.setSprite(this.hurtSprite, 4);
+        } else if (this.isAttacking && this.attackSprite.complete) {
+            this.setSprite(this.attackSprite, 4);
+        } else if (this.img !== this.walkingSprite) {
+            this.setSprite(this.walkingSprite, 4);
+            this.currentFrame = 0;
         }
     }
 
-    // 5. Frame Animation läuft IMMER
-    const currentTime = Date.now();
-    if (currentTime - this.lastFrameTime >= this.animationSpeed) {
+    setSprite(sprite, frames) {
+        this.img = sprite;
+        this.frameWidth = sprite.width / frames;
+        this.frameHeight = sprite.height;
+        this.totalFrames = frames;
+    }
+
+    advanceFrame() {
+        const currentTime = Date.now();
+        if (currentTime - this.lastFrameTime < this.animationSpeed) return;
+        
         if (this.isDead) {
-            if (this.currentFrame < this.totalFrames - 1) {
-                this.currentFrame++;
-            }
+            this.advanceDeadFrame();
         } else if (this.isHurt || this.isAttacking) {
-            // Hurt/Attack Animation nur einmal abspielen
-            if (this.currentFrame < this.totalFrames - 1) {
-                this.currentFrame++;
-            } else {
-                // Animation fertig
-                if (this.isHurt) {
-                    this.isHurt = false;
-                    this.startWalking(); // ✅ Zurück zum Laufen
-                    console.log("Hurt animation finished");
-                }
-                if (this.isAttacking) {
-                    this.isAttacking = false;
-                }
-                this.currentFrame = 0;
-            }
+            this.advanceActionFrame();
         } else {
-            // Normale Animation (Walking) - endlos wiederholen
-            this.currentFrame++;
-            if (this.currentFrame >= this.totalFrames) {
-                this.currentFrame = 0;
-            }
+            this.advanceLoopFrame();
         }
         this.lastFrameTime = currentTime;
     }
-}
 
-    move() {
-        // ✅ NUR bewegen wenn nicht tot
-        if (!this.isDead) {
-            this.x += this.speed * this.direction;
-            
-            // Richtung umkehren bei Grenzen
-            if (this.x <= this.leftBoundary || this.x >= this.rightBoundary) {
-                this.direction *= -1;
-                this.otherDirection = (this.direction === 1);
-            }
+    advanceDeadFrame() {
+        if (this.currentFrame < this.totalFrames - 1) {
+            this.currentFrame++;
         }
     }
 
-    takeDamage(damage) {
-    if (this.isDead) return; // Kein Schaden wenn schon tot
-    
-    this.energy -= damage;
-    this.isHurt = true;
-    this.currentFrame = 0; // Animation von vorne starten
-    if (this.AUDIO_HURT) {
-        this.AUDIO_HURT.currentTime = 0;
-        this.AUDIO_HURT.volume = 0.05;
-        this.AUDIO_HURT.play();
+    advanceActionFrame() {
+        if (this.currentFrame < this.totalFrames - 1) {
+            this.currentFrame++;
+        } else {
+            this.finishAction();
+        }
     }
-    
-    console.log("SmallMushroom took damage:", damage, "Energy:", this.energy);
-    
-    // ✅ WICHTIG: Stoppe die Bewegung während hurt
-    this.stopWalking();
-}
+
+    finishAction() {
+        if (this.isHurt) {
+            this.isHurt = false;
+            this.startWalking();
+        }
+        if (this.isAttacking) this.isAttacking = false;
+        this.currentFrame = 0;
+    }
+
+    advanceLoopFrame() {
+        this.currentFrame++;
+        if (this.currentFrame >= this.totalFrames) {
+            this.currentFrame = 0;
+        }
+    }
+
+    move() {
+        if (this.isDead) return;
+        this.x += this.speed * this.direction;
+        if (this.x <= this.leftBoundary || this.x >= this.rightBoundary) {
+            this.direction *= -1;
+            this.otherDirection = (this.direction === 1);
+        }
+    }
+
+    takeDamageEnemy(damage) {
+        if (this.isDead) return;
+        this.energy -= damage;
+        this.isHurt = true;
+        this.currentFrame = 0;
+        this.playHurtSound();
+        this.stopWalking();
+    }
+
+    playHurtSound() {
+        if (this.AUDIO_HURT) {
+            this.AUDIO_HURT.currentTime = 0;
+            this.AUDIO_HURT.volume = 0.05;
+            this.AUDIO_HURT.play();
+        }
+    }
 
     attackEnemy() {
-        if (!this.isAttacking && !this.isDead) { // ✅ Nicht attackieren wenn tot
+        if (!this.isAttacking && !this.isDead) {
             this.isAttacking = true;
             this.currentFrame = 0;
-            console.log("SmallMushroom attack initiated");
         }
     }
 
     startWalking() {
-        if (!this.isDead) { // ✅ Nicht laufen wenn tot
+        if (!this.isDead) {
             this.isWalking = true;
             this.isMoving = true;
             this.currentFrame = 0;

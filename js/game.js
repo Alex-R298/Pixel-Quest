@@ -33,14 +33,13 @@
 
 let canvas;
 let world;
+let isGameStarting = true;
 let keyboard = new Keyboard();
-
-function init() {
-    canvas = document.getElementById("canvas");
-    world = new World(canvas, keyboard);
-}
+let screenMusic = new Audio('./audio/start-screen.mp3');
+let gameMusic = new Audio('./audio/background.mp3');
 
 window.addEventListener('keydown', (e) => {
+    if (isGameStarting) return;
     if (e.keyCode === 65) keyboard.A = true;      // A
     if (e.keyCode === 68) keyboard.D = true;      // D
     if (e.keyCode === 32) keyboard.SPACE = true;  // Space
@@ -50,6 +49,7 @@ window.addEventListener('keydown', (e) => {
 });
 
 window.addEventListener('keyup', (e) => {
+    if (isGameStarting) return;
     if (e.keyCode === 65) keyboard.A = false;
     if (e.keyCode === 68) keyboard.D = false;
     if (e.keyCode === 32) keyboard.SPACE = false;
@@ -58,13 +58,47 @@ window.addEventListener('keyup', (e) => {
     if (e.keyCode === 13) keyboard.ENTER = false;
 });
 
+window.addEventListener('load', function() {
+    playStartMusic();
+    // Nur Musik, KEINE World
+});
+
+function init() {
+    canvas = document.getElementById("canvas");
+    world = new World(canvas, keyboard );
+}
+
+function playStartMusic() {
+    screenMusic.currentTime = 0;
+    screenMusic.play();
+    screenMusic.loop = true;
+    screenMusic.volume = 0.08;
+}
+
+function playGameMusic() {
+    setTimeout(() => {
+    gameMusic.currentTime = 0;
+    gameMusic.play();
+    gameMusic.loop = true;
+    gameMusic.volume = 0.08;
+    }, 1000);
+}
+
+
+
+
 
 function startGame() {
     const overlay = document.getElementById('overlay-start-screen');
     const canvas = document.getElementById('canvas');
-    canvas.style.filter = 'none';
-    overlay.style.display = 'none';
-    init();
+    setTimeout(() => {
+        overlay.style.display = 'none';
+        isGameStarting = false;
+        canvas.style.filter = 'none';
+    }, 1000);
+    screenMusic.pause();
+    clickButtonSound();
+    playGameMusic();
 }
 
 function showDeadScreen() {
@@ -72,7 +106,7 @@ function showDeadScreen() {
     const canvas = document.getElementById('canvas');
     canvas.style.filter = 'blur(7px)';
     overlay.style.display = 'flex';
-    
+    stopGameMusic();
 }
 
 function showWinScreen() {
@@ -80,18 +114,33 @@ function showWinScreen() {
     const canvas = document.getElementById('canvas');
     canvas.style.filter = 'blur(7px)';
     overlay.style.display = 'flex';
-    
+    stopGameMusic();
 }
 
 function restartGame(){
     const overlay = document.getElementById('overlay-dead-screen');
     const winOverlay = document.getElementById('overlay-win-screen');
-    overlay.style.display = 'none';
-    winOverlay.style.display = 'none';
     const canvas = document.getElementById('canvas');
-    canvas.style.filter = 'none';
+    setTimeout(() => {
+        overlay.style.display = 'none';
+        winOverlay.style.display = 'none';
+        canvas.style.filter = 'none';
+    }, 1000);
     if (world) world.cleanup();
     world = new World(canvas, keyboard);
+    clickButtonSound();
+    playGameMusic();
+}
+
+function clickButtonSound() {
+    let clickSound = new Audio('./audio/click.mp3');
+    clickSound.volume = 0.1;
+    clickSound.play();
+}
+
+function stopGameMusic() {
+    gameMusic.pause();
+    gameMusic.currentTime = 0;
 }
 
 window.debugMode = true;

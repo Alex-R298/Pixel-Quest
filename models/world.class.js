@@ -8,7 +8,7 @@ class World {
     statusBar = new StatusBar();
     energyBar = new EnergyBar();
     coin = new Coin();
-    // BACKGROUND_MUSIC = new Audio('./audio/background.mp3');
+    BACKGROUND_MUSIC = new Audio('./audio/background.mp3');
 
     constructor(canvas, keyboard) {
         this.ctx = canvas.getContext('2d');
@@ -21,9 +21,9 @@ class World {
         this.draw();
         this.setWorld();
         this.checkCollisions();
-        this.BACKGROUND_MUSIC.volume = 0.08;
-        this.BACKGROUND_MUSIC.loop = true;
-        this.BACKGROUND_MUSIC.play();
+        // this.BACKGROUND_MUSIC.volume = 0.08;
+        // this.BACKGROUND_MUSIC.loop = true;
+        // this.BACKGROUND_MUSIC.play();
     }
 
     setWorld() {
@@ -146,7 +146,7 @@ checkEnemyAttack(enemy) {
                         if (enemy.isColliding(this.character) && 
                             !this.character.isDead && 
                             !this.character.isHurt) {
-                            this.character.takeDamage(33.4); // 3 Treffer = tot
+                            this.character.takeDamage(100/3); // 3 Treffer = tot
                             this.statusBar.setPercentage(this.character.energy);
                         }
                         
@@ -173,7 +173,7 @@ damageToEnemies(enemy) {
         !enemy.isDead && 
         !enemy.isHurt) {  // ✅ Wichtig: Nur treffen wenn Gegner nicht bereits hurt
         
-        enemy.takeDamage(50);
+        enemy.takeDamageEnemy(50);
         console.log("Enemy hit! Energy:", enemy.energy);
         
         // enemy.isHurt wird in animateEnemy() automatisch zurückgesetzt
@@ -242,8 +242,22 @@ damageToEnemies(enemy) {
 }
 
 cleanup() {
-    cancelAnimationFrame(this.animationFrame);
-    this.intervals.forEach(interval => clearInterval(interval));
+    if (this.animationFrame) {
+        cancelAnimationFrame(this.animationFrame);
+    }
+    if (this.intervals) {
+        this.intervals.forEach(interval => clearInterval(interval));
+        this.intervals = [];
+    }
+    if (this.BACKGROUND_MUSIC) {
+        this.BACKGROUND_MUSIC.pause();
+        this.BACKGROUND_MUSIC.currentTime = 0;
+    }
+    // Stoppe alle Enemy Timeouts
+    this.level.enemies.forEach(enemy => {
+        enemy.isAttacking = false;
+        enemy.hasDealtDamage = false;
+    });
 }
 
     addObjectsToMap(objects) {

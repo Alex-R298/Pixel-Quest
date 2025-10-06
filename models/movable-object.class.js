@@ -104,6 +104,9 @@ class MovableObject extends DrawableObject {
         if (this.isDead) return;
         
         this.energy -= damage;
+    //     if (this.energy <= 0) {
+    //     this.energy = 0;  // Setze auf exakt 0
+    // }
         this.isHurt = true;
             if (this.AUDIO_HURT) {
         this.AUDIO_HURT.currentTime = 0;

@@ -88,7 +88,10 @@ class Character extends MovableObject {
             this.totalFrames = 8;
             this.currentFrame = 0;
             this.deathAnimationComplete = false;
-            showDeadScreen();
+             setTimeout(() => {
+        showDeadScreen();
+    }, 1200);
+
 
         }
 

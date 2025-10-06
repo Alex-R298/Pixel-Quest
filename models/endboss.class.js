@@ -1,140 +1,3 @@
-// class Endboss extends MovableObject {
-//     y;
-//     x;
-//     width = 80;
-//     height = 80;
-//      isMoving = false;
-//     isWalking = false;
-//     isAttacking = false;
-//     isHurt = false;
-//     isDead = false;
-//     walkingSprite = null;
-//     idleSprite = null;
-//     attackSprite = null;
-//     hurtSprite = null;
-//     deadSprite = null;
-//      leftBoundary = 0;
-//     rightBoundary = 0;
-//     direction = -1;
-//     energy = 250;
-
-//     constructor(x, y) {
-//         super(); // ✅ Korrekte super() Verwendung
-        
-//         // Idle Sprite laden
-//         this.idleSprite = new Image();
-//         this.idleSprite.src = '../img/Huge mushroom/HugeMushroom_idle.png';
-//         this.img = this.idleSprite;
-
-//         // Walking Sprite laden
-//         this.walkingSprite = new Image();
-//         this.walkingSprite.src = '../img/Huge mushroom/HugeMushroom_walk.png';
-//         this.walkingSprite.onload = () => {
-//             // Berechne frameWidth für Walking Sprite (6 Frames)
-//             this.frameWidth = this.walkingSprite.width / 6;
-//             this.frameHeight = this.walkingSprite.height;
-//         };
-
-//         this.x = x;
-//         this.y = y;
-//         this.width = 160;
-//         this.height = 160;
-//         this.totalFrames = 6; // 6 Frames im Walking Sprite
-//         this.speed = 0.15 + Math.random() * 0.25; // Langsamere Geschwindigkeit
-//         this.leftBoundary = x - 150;  // 150px links von Start
-//         this.rightBoundary = x + 150; // 150px rechts von Start
-//         this.direction = -1; // Startet nach links
-
-//         this.attackSprite = new Image();
-//         this.attackSprite.src = '../img/Huge mushroom/HugeMushroom_attack2.png';
-//         this.attackSprite.onload = () => {
-//             // Berechne frameWidth für Attack Sprite (4 Frames)
-//             this.frameWidth = this.attackSprite.width / 4;
-//             this.frameHeight = this.attackSprite.height;
-
-//             // console.log(`Attack sprite loaded, frameWidth: ${this.frameWidth}`);
-//         };
-
-//         this.hurtSprite = new Image();
-//         this.hurtSprite.src = '../img/Huge mushroom/HugeMushroom_hurt.png';
-//         this.hurtSprite.onload = () => {
-//             // Berechne frameWidth für Hurt Sprite (2 Frames)
-//             this.frameWidth = this.hurtSprite.width / 4;
-//             this.frameHeight = this.hurtSprite.height;
-//             console.log(`Hurt sprite loaded, frameWidth: ${this.frameWidth}`);
-//         };
-
-//         this.deadSprite = new Image();
-//         this.deadSprite.src = '../img/Huge mushroom/HugeMushroom_death.png';
-//         this.deadSprite.onload = () => {
-//             // Berechne frameWidth für Dead Sprite (1 Frame)
-//             this.frameWidth = this.deadSprite.width / 4;
-//             this.frameHeight = this.deadSprite.height;
-//             console.log(`Dead sprite loaded, frameWidth: ${this.frameWidth}`);
-//         };
-
-//     }
-
-
-//     // ✅ HIER KOMMT DIE NEUE move() METHODE REIN:
-//     move() {
-//     this.x += this.speed * this.direction;
-    
-//     // Richtung umkehren bei Grenzen
-//     if (this.x <= this.leftBoundary || this.x >= this.rightBoundary) {
-//         this.direction *= -1;
-//         this.otherDirection = (this.direction === 1);
-//         // console.log(`Mushroom turned around at x:${this.x}, new direction:${this.direction}`);
-//     }
-// }
-
-// deadAnimation() {
-//     this.img = this.deadSprite;
-//     this.frameWidth = this.deadSprite.width / 4;
-//     this.totalFrames = 4;
-//     this.currentFrame = 0;
-//     this.isMoving = false;
-// }
-
-// hurtAnimation() {
-//     this.img = this.hurtSprite;
-//     this.frameWidth = this.hurtSprite.width / 4;
-//     this.totalFrames = 4;
-//     this.currentFrame = 0;
-// }
-
-// attackEnemy() {
-//         if (!this.isAttacking) {
-//             this.isAttacking = true;
-//             this.img = this.attackSprite;
-//             this.frameWidth = this.attackSprite.width / 4;
-//             this.frameHeight = this.attackSprite.height;
-//             this.totalFrames = 4;
-//             this.currentFrame = 0;
-
-//             // Timer um Attack zu beenden
-//             setTimeout(() => {
-//                 this.isAttacking = false;
-//             }, 400); // 4 Frames * 100ms
-//             console.log("Attack initiated");
-//         }
-//     }
-
-//     startWalking() {
-//         this.isWalking = true;
-//         this.isMoving = true;
-//         this.img = this.walkingSprite; // ✅ Wechsle zum Walking Sprite
-//         this.currentFrame = 0; // ✅ Starte bei Frame 0
-//         // console.log("SmallMushroom started walking at x:", this.x);
-//     }
-
-//     stopWalking() {
-//         this.isWalking = false;
-//         this.isMoving = false;
-//     }
-// }
-
-
 class Endboss extends MovableObject {
     y;
     x;
@@ -146,7 +9,6 @@ class Endboss extends MovableObject {
     isHurt = false;
     isDead = false;
     walkingSprite = null;
-    idleSprite = null;
     attackSprite = null;
     hurtSprite = null;
     deadSprite = null;
@@ -160,171 +22,164 @@ class Endboss extends MovableObject {
     constructor(x, y) {
         super();
         this.hasDealtDamage = false;
-        // Walking Sprite laden
-        this.walkingSprite = new Image();
-        this.walkingSprite.src = '../img/Huge mushroom/HugeMushroom_walk.png';
-        this.walkingSprite.onload = () => {
-            console.log('Endboss walking sprite loaded');
-        };
+        this.initializePosition(x, y);
+        this.loadSprites();
+    }
 
-        // Attack Sprite laden
-        this.attackSprite = new Image();
-        this.attackSprite.src = '../img/Huge mushroom/HugeMushroom_attack2.png';
-        this.attackSprite.onload = () => {
-            console.log('Endboss attack sprite loaded');
-        };
-
-        // Hurt Sprite laden
-        this.hurtSprite = new Image();
-        this.hurtSprite.src = '../img/Huge mushroom/HugeMushroom_hurt.png';
-        this.hurtSprite.onload = () => {
-            console.log('Endboss hurt sprite loaded');
-        };
-
-        // Dead Sprite laden
-        this.deadSprite = new Image();
-        this.deadSprite.src = '../img/Huge mushroom/HugeMushroom_death.png';
-        this.deadSprite.onload = () => {
-            console.log('Endboss dead sprite loaded');
-        };
-
+    initializePosition(x, y) {
         this.x = x;
         this.y = y;
-        this.width = 160;
-        this.height = 160;
-        this.totalFrames = 6; // Walking hat 6 Frames
+        this.currentFrame = 0;
+        this.totalFrames = 6;
         this.speed = 0.15 + Math.random() * 0.25;
         this.leftBoundary = x - 150;
         this.rightBoundary = x + 150;
         this.direction = -1;
     }
 
+    loadSprites() {
+        this.walkingSprite = this.createSprite('../img/Huge mushroom/HugeMushroom_walk.png', 6);
+        this.attackSprite = this.createSprite('../img/Huge mushroom/HugeMushroom_attack2.png', 4);
+        this.hurtSprite = this.createSprite('../img/Huge mushroom/HugeMushroom_hurt.png', 4);
+        this.deadSprite = this.createSprite('../img/Huge mushroom/HugeMushroom_death.png', 4);
+        this.img = this.walkingSprite;
+    }
+
+    createSprite(src, frames) {
+        const sprite = new Image();
+        sprite.onload = () => {
+            if (!this.frameWidth) {
+                this.frameWidth = sprite.width / frames;
+                this.frameHeight = sprite.height;
+            }
+        };
+        sprite.src = src;
+        return sprite;
+    }
+
     animateEnemy() {
-        // 1. Death Check
+        if (this.handleDeath()) return;
+        if (!this.isDead) this.updateSprite();
+        this.advanceFrame();
+    }
+
+    handleDeath() {
         if (this.energy <= 0 && !this.isDead) {
-            if (!this.deadSprite || !this.deadSprite.complete) {
+            if (!this.deadSprite?.complete) {
                 this.stopWalking();
-                console.log("Dead sprite not loaded!");
-                return;
+                return true;
             }
-            this.isDead = true;
-            this.isMoving = false; // ✅ Bewegung stoppen
-            this.isWalking = false; // ✅ Walking stoppen
-            this.img = this.deadSprite;
-            this.frameWidth = this.deadSprite.width / 4;
-            this.frameHeight = this.deadSprite.height;
-            this.totalFrames = 4;
+            this.setDeadState();
+            setTimeout(() => showWinScreen(), 1500);
+        }
+        return false;
+    }
+
+    setDeadState() {
+        this.isDead = true;
+        this.isMoving = false;
+        this.isWalking = false;
+        this.setSprite(this.deadSprite, 4);
+        this.currentFrame = 0;
+    }
+
+    updateSprite() {
+        if (this.isHurt && this.hurtSprite.complete) {
+            this.setSprite(this.hurtSprite, 4);
+        } else if (this.isAttacking && this.attackSprite.complete) {
+            this.setSprite(this.attackSprite, 4);
+        } else if (this.img !== this.walkingSprite) {
+            this.setSprite(this.walkingSprite, 6);
             this.currentFrame = 0;
-            console.log("Endboss is dead");
-            setTimeout(() => {
-                showWinScreen();
-            }, 1500);
         }
+    }
 
-        // Nur andere Logic wenn nicht tot
-        if (!this.isDead) {
-            // 2. Hurt Check - HÖCHSTE PRIORITÄT
-            if (this.isHurt && this.hurtSprite.complete) {
-                this.img = this.hurtSprite;
-                this.frameWidth = this.hurtSprite.width / 4;
-                this.frameHeight = this.hurtSprite.height;
-                this.totalFrames = 4;
-                console.log("Showing hurt animation");
-            }
-            // 3. Attack Check
-            else if (this.isAttacking && this.attackSprite.complete) {
-                this.img = this.attackSprite;
-                this.frameWidth = this.attackSprite.width / 4;
-                this.frameHeight = this.attackSprite.height;
-                this.totalFrames = 4;
-            }
-            // 4. Walking (Standard wenn nichts anderes)
-            else {
-                if (this.img !== this.walkingSprite) {
-                    this.img = this.walkingSprite;
-                    this.frameWidth = this.walkingSprite.width / 6;
-                    this.frameHeight = this.walkingSprite.height;
-                    this.totalFrames = 6;
-                    this.currentFrame = 0;
-                }
-            }
-        }
+    setSprite(sprite, frames) {
+        this.img = sprite;
+        this.frameWidth = sprite.width / frames;
+        this.frameHeight = sprite.height;
+        this.totalFrames = frames;
+    }
 
-        // 5. Frame Animation läuft IMMER
+    advanceFrame() {
         const currentTime = Date.now();
-        if (currentTime - this.lastFrameTime >= this.animationSpeed) {
-            if (this.isDead) {
-                if (this.currentFrame < this.totalFrames - 1) {
-                    this.currentFrame++;
-                }
-            } else if (this.isHurt || this.isAttacking) {
-                // Hurt/Attack Animation nur einmal abspielen
-                if (this.currentFrame < this.totalFrames - 1) {
-                    this.currentFrame++;
-                } else {
-                    // Animation fertig
-                    if (this.isHurt) {
-                        this.isHurt = false;
-                        this.startWalking(); // ✅ Zurück zum Laufen
-                        console.log("Hurt animation finished");
-                    }
-                    if (this.isAttacking) {
-                        this.isAttacking = false;
-                    }
-                    this.currentFrame = 0;
-                }
-            } else {
-                // Normale Animation (Walking) - endlos wiederholen
-                this.currentFrame++;
-                if (this.currentFrame >= this.totalFrames) {
-                    this.currentFrame = 0;
-                }
-            }
-            this.lastFrameTime = currentTime;
+        if (currentTime - this.lastFrameTime < this.animationSpeed) return;
+        
+        if (this.isDead) {
+            this.advanceDeadFrame();
+        } else if (this.isHurt || this.isAttacking) {
+            this.advanceActionFrame();
+        } else {
+            this.advanceLoopFrame();
+        }
+        this.lastFrameTime = currentTime;
+    }
+
+    advanceDeadFrame() {
+        if (this.currentFrame < this.totalFrames - 1) {
+            this.currentFrame++;
+        }
+    }
+
+    advanceActionFrame() {
+        if (this.currentFrame < this.totalFrames - 1) {
+            this.currentFrame++;
+        } else {
+            this.finishAction();
+        }
+    }
+
+    finishAction() {
+        if (this.isHurt) {
+            this.isHurt = false;
+            this.startWalking();
+        }
+        if (this.isAttacking) this.isAttacking = false;
+        this.currentFrame = 0;
+    }
+
+    advanceLoopFrame() {
+        this.currentFrame++;
+        if (this.currentFrame >= this.totalFrames) {
+            this.currentFrame = 0;
         }
     }
 
     move() {
-        // ✅ NUR bewegen wenn nicht tot
-        if (!this.isDead) {
-            this.x += this.speed * this.direction;
-            
-            // Richtung umkehren bei Grenzen
-            if (this.x <= this.leftBoundary || this.x >= this.rightBoundary) {
-                this.direction *= -1;
-                this.otherDirection = (this.direction === 1);
-            }
+        if (this.isDead) return;
+        this.x += this.speed * this.direction;
+        if (this.x <= this.leftBoundary || this.x >= this.rightBoundary) {
+            this.direction *= -1;
+            this.otherDirection = (this.direction === 1);
         }
     }
 
-    takeDamage(damage) {
-        if (this.isDead) return; // Kein Schaden wenn schon tot
-        
+    takeDamageEnemy(damage) {
+        if (this.isDead) return;
         this.energy -= damage;
         this.isHurt = true;
-        this.currentFrame = 0; // Animation von vorne starten
-        if (this.AUDIO_HURT) {
-        this.AUDIO_HURT.currentTime = 0;
-        this.AUDIO_HURT.volume = 0.05;
-        this.AUDIO_HURT.play();
-    }
-        
-        console.log("Endboss took damage:", damage, "Energy:", this.energy);
-        
-        // ✅ WICHTIG: Stoppe die Bewegung während hurt
+        this.currentFrame = 0;
+        this.playHurtSound();
         this.stopWalking();
     }
 
+    playHurtSound() {
+        if (this.AUDIO_HURT) {
+            this.AUDIO_HURT.currentTime = 0;
+            this.AUDIO_HURT.volume = 0.05;
+            this.AUDIO_HURT.play();
+        }
+    }
+
     attackEnemy() {
-        if (!this.isAttacking && !this.isDead) { // ✅ Nicht attackieren wenn tot
+        if (!this.isAttacking && !this.isDead) {
             this.isAttacking = true;
             this.currentFrame = 0;
-            console.log("Endboss attack initiated");
         }
     }
 
     startWalking() {
-        if (!this.isDead) { // ✅ Nicht laufen wenn tot
+        if (!this.isDead) {
             this.isWalking = true;
             this.isMoving = true;
             this.currentFrame = 0;
