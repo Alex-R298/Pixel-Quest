@@ -18,12 +18,20 @@ class SmallMushroom extends MovableObject {
     energy = 100;
     hitboxOffset = { x: 20, y: 10, width: -15, height: -10 };
     AUDIO_HURT = new Audio('./audio/enemy-hurt.mp3');
+    attackStartTime = 0;
+    attackCooldown = false;
+    hitCooldown = false;
+    aggroRange = 140;
+    isAggro = false;
 
     constructor(x, y) {
         super();
         this.hasDealtDamage = false;
         this.initializePosition(x, y);
         this.loadSprites();
+        setInterval(() => {
+            this.applyGravity();
+        }, 1000 / 60);
     }
 
     initializePosition(x, y) {
@@ -94,16 +102,17 @@ class SmallMushroom extends MovableObject {
     }
 
     setSprite(sprite, frames) {
-        this.img = sprite;
-        this.frameWidth = sprite.width / frames;
-        this.frameHeight = sprite.height;
-        this.totalFrames = frames;
+        if (this.img !== sprite) {
+            this.img = sprite;
+            this.frameWidth = sprite.width / frames;
+            this.frameHeight = sprite.height;
+            this.totalFrames = frames;
+        }
     }
 
     advanceFrame() {
         const currentTime = Date.now();
         if (currentTime - this.lastFrameTime < this.animationSpeed) return;
-        
         if (this.isDead) {
             this.advanceDeadFrame();
         } else if (this.isHurt || this.isAttacking) {
@@ -145,7 +154,38 @@ class SmallMushroom extends MovableObject {
     }
 
     move() {
-        if (this.isDead) return;
+        if (this.isDead || this.isHurt || this.isAttacking) return;
+        if (!this.isMoving && !this.isWalking) {
+            this.startWalking();
+        }
+        if (this.world && this.world.character && !this.world.character.isDead) {
+            const distanceToPlayer = Math.abs(this.x - this.world.character.x);
+            const aggroThreshold = this.isAggro ? this.aggroRange + 20 : this.aggroRange;
+            if (distanceToPlayer <= aggroThreshold) {
+                this.chasePlayer();
+                this.isAggro = true;
+                return;
+            }
+        }
+        this.patrol();
+        this.isAggro = false;
+    }
+
+    chasePlayer() {
+        const playerX = this.world.character.x;
+        if (playerX < this.x) {
+            this.direction = -1;
+            this.otherDirection = false;
+            this.x -= this.speed * 1.5;
+        } else {
+            this.direction = 1;
+            this.otherDirection = true;
+            this.x += this.speed * 1.5;
+        }
+    }
+
+    patrol() {
+        if (this.knockbackActive) return;
         this.x += this.speed * this.direction;
         if (this.x <= this.leftBoundary || this.x >= this.rightBoundary) {
             this.direction *= -1;
@@ -175,6 +215,35 @@ class SmallMushroom extends MovableObject {
             this.isAttacking = true;
             this.currentFrame = 0;
         }
+    }
+
+    getAttackHitbox() {
+        const attackWidth = 40;
+        const attackHeight = 60;
+        if (this.otherDirection) {
+            return {
+                x: this.x + this.width,
+                y: this.y + 10,
+                width: attackWidth,
+                height: attackHeight
+            };
+        } else {
+            return {
+                x: this.x - attackWidth,
+                y: this.y + 10,
+                width: attackWidth,
+                height: attackHeight
+            };
+        }
+    }
+
+    isAttackHitting(target) {
+        if (!this.isAttacking) return false;
+        const attackBox = this.getAttackHitbox();
+        return target.x + target.width > attackBox.x &&
+               target.x < attackBox.x + attackBox.width &&
+               target.y + target.height > attackBox.y &&
+               target.y < attackBox.y + attackBox.height;
     }
 
     startWalking() {

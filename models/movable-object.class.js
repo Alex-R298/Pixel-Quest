@@ -8,11 +8,8 @@ class MovableObject extends DrawableObject {
 
     applyGravity() {
         if (this.isClimbing) return;
-        
         if (this.checkDeath()) return;
-        
         const onPlatform = this.checkPlatformCollision();
-        
         if (onPlatform) {
             this.landOnPlatform();
         } else {
@@ -25,7 +22,9 @@ class MovableObject extends DrawableObject {
         if (this.y > deathY) {
             this.energy = 0;
             this.isDead = true;
-            showDeadScreen();
+            if (this instanceof Character) {
+                showDeadScreen();
+            }
             return true;
         }
         return false;
@@ -104,16 +103,13 @@ class MovableObject extends DrawableObject {
         if (this.isDead) return;
         
         this.energy -= damage;
-    //     if (this.energy <= 0) {
-    //     this.energy = 0;  // Setze auf exakt 0
-    // }
         this.isHurt = true;
-            if (this.AUDIO_HURT) {
-        this.AUDIO_HURT.currentTime = 0;
-        this.AUDIO_HURT.volume = 0.1;
-        this.AUDIO_HURT.play();
-    }
-
+        
+        if (this.AUDIO_HURT) {
+            this.AUDIO_HURT.currentTime = 0;
+            this.AUDIO_HURT.volume = 0.1;
+            this.AUDIO_HURT.play();
+        }
         
         setTimeout(() => {
             this.isHurt = false;

@@ -18,12 +18,20 @@ class Endboss extends MovableObject {
     energy = 250;
     hitboxOffset = { x: 15, y: 30, width: 15, height: -30 };
     AUDIO_HURT = new Audio('./audio/boss-hurt.mp3');
+    attackStartTime = 0; 
+    attackCooldown = false;
+    hitCooldown = false;
+    aggroRange = 200;
+    isAggro = false;
 
     constructor(x, y) {
         super();
         this.hasDealtDamage = false;
         this.initializePosition(x, y);
         this.loadSprites();
+        setInterval(() => {
+            this.applyGravity();
+        }, 1000 / 60);
     }
 
     initializePosition(x, y) {
@@ -95,16 +103,17 @@ class Endboss extends MovableObject {
     }
 
     setSprite(sprite, frames) {
-        this.img = sprite;
-        this.frameWidth = sprite.width / frames;
-        this.frameHeight = sprite.height;
-        this.totalFrames = frames;
+        if (this.img !== sprite) {
+            this.img = sprite;
+            this.frameWidth = sprite.width / frames;
+            this.frameHeight = sprite.height;
+            this.totalFrames = frames;
+        }
     }
 
     advanceFrame() {
         const currentTime = Date.now();
         if (currentTime - this.lastFrameTime < this.animationSpeed) return;
-        
         if (this.isDead) {
             this.advanceDeadFrame();
         } else if (this.isHurt || this.isAttacking) {
@@ -146,7 +155,38 @@ class Endboss extends MovableObject {
     }
 
     move() {
-        if (this.isDead) return;
+        if (this.isDead || this.isHurt || this.isAttacking) return;
+        if (!this.isMoving && !this.isWalking) {
+            this.startWalking();
+        }
+        if (this.world && this.world.character && !this.world.character.isDead) {
+            const distanceToPlayer = Math.abs(this.x - this.world.character.x);
+            const aggroThreshold = this.isAggro ? this.aggroRange + 30 : this.aggroRange;
+            if (distanceToPlayer <= aggroThreshold) {
+                this.chasePlayer();
+                this.isAggro = true;
+                return;
+            }
+        }
+        this.patrol();
+        this.isAggro = false;
+    }
+
+    chasePlayer() {
+        const playerX = this.world.character.x;
+        if (playerX < this.x) {
+            this.direction = -1;
+            this.otherDirection = false;
+            this.x -= this.speed * 1.8;
+        } else {
+            this.direction = 1;
+            this.otherDirection = true;
+            this.x += this.speed * 1.8;
+        }
+    }
+
+    patrol() {
+        if (this.knockbackActive) return;
         this.x += this.speed * this.direction;
         if (this.x <= this.leftBoundary || this.x >= this.rightBoundary) {
             this.direction *= -1;
@@ -176,6 +216,35 @@ class Endboss extends MovableObject {
             this.isAttacking = true;
             this.currentFrame = 0;
         }
+    }
+
+    getAttackHitbox() {
+        const attackWidth = 50;
+        const attackHeight = 80;
+        if (this.otherDirection) {
+            return {
+                x: this.x + this.width,
+                y: this.y + 40,
+                width: attackWidth,
+                height: attackHeight
+            };
+        } else {
+            return {
+                x: this.x - attackWidth,
+                y: this.y + 40,
+                width: attackWidth,
+                height: attackHeight
+            };
+        }
+    }
+
+    isAttackHitting(target) {
+        if (!this.isAttacking) return false;
+        const attackBox = this.getAttackHitbox();
+        return target.x + target.width > attackBox.x &&
+               target.x < attackBox.x + attackBox.width &&
+               target.y + target.height > attackBox.y &&
+               target.y < attackBox.y + attackBox.height;
     }
 
     startWalking() {
