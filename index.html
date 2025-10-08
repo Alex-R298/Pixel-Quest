@@ -26,29 +26,71 @@
 <body onload="init();">
     <h1>Welcome to Pixel Quest</h1>
 <section class="canvas-frame" id="fullscreen">
-    <div id="overlay-start-screen" class="game-overlay"> 
-    <div class="overlay-content">
-        <h2>PIXEL QUEST</h2>
-        <p>Press "Start Game" to begin your adventure!</p>
-        <button onclick="startGame()">Start Game</button>
+    <!-- Intro Screen -->
+    <div id="intro-screen" class="game-overlay">
+        <div class="intro-content">
+            <h2 class="intro-title">PIXEL QUEST</h2>
+        </div>
     </div>
-</div>
 
-<div id="overlay-dead-screen" class="game-overlay" style="display: none;">
-    <div class="overlay-content">
-        <h2>GAME OVER</h2>
-        <p>Press "Restart" to try again!</p>
-        <button onclick="restartGame()">Restart</button>
+    <!-- Main Menu -->
+    <div id="main-menu" class="game-overlay" style="display: none;">
+        <div class="overlay-content">
+            <h2 class="menu-title">PIXEL QUEST</h2>
+            <div class="menu-buttons">
+                <button onclick="showSettings()">SETTINGS</button>
+                <button onclick="showControls()">CONTROLS</button>
+                <button onclick="startGame()">START GAME</button>
+            </div>
+        </div>
     </div>
-</div>
 
-<div id="overlay-win-screen" class="game-overlay" style="display: none;">
-    <div class="overlay-content">
-        <h2>YOU WIN!</h2>
-        <p>Congratulations on completing Pixel Quest!</p>
-        <button onclick="restartGame()">Play Again</button>
+    <!-- Settings Overlay -->
+    <div id="settings-overlay" class="game-overlay" style="display: none;">
+        <div class="overlay-content">
+            <h2>SETTINGS</h2>
+            <div class="settings-content">
+                <p>Music Volume: <span id="music-volume">80%</span></p>
+                <input type="range" min="0" max="100" value="80" onchange="changeMusicVolume(this.value)">
+                <p>Sound Effects: <span id="sfx-volume">100%</span></p>
+                <input type="range" min="0" max="100" value="100" onchange="changeSfxVolume(this.value)">
+            </div>
+            <button onclick="closeSettings()">BACK</button>
+        </div>
     </div>
-</div>
+
+    <!-- Controls Overlay -->
+    <div id="controls-overlay" class="game-overlay" style="display: none;">
+        <div class="overlay-content">
+            <h2>CONTROLS</h2>
+            <div class="controls-content">
+                <p><span class="key">A</span> - Move Left</p>
+                <p><span class="key">D</span> - Move Right</p>
+                <p><span class="key">W</span> - Jump</p>
+                <p><span class="key">SPACE</span> - Attack</p>
+            </div>
+            <button onclick="closeControls()">BACK</button>
+        </div>
+    </div>
+
+    <!-- Game Over Screen -->
+    <div id="overlay-dead-screen" class="game-overlay" style="display: none;">
+        <div class="overlay-content">
+            <h2>GAME OVER</h2>
+            <p>Press "Restart" to try again!</p>
+            <button onclick="restartGame()">Restart</button>
+        </div>
+    </div>
+
+    <!-- Win Screen -->
+    <div id="overlay-win-screen" class="game-overlay" style="display: none;">
+        <div class="overlay-content">
+            <h2>YOU WIN!</h2>
+            <p>Congratulations on completing Pixel Quest!</p>
+            <button onclick="restartGame()">Play Again</button>
+        </div>
+    </div>
+
     <canvas id="canvas" width="720" height="480"></canvas>
 </section>
 </body>

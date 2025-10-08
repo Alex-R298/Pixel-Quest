@@ -21,7 +21,7 @@ class SmallMushroom extends MovableObject {
     attackStartTime = 0;
     attackCooldown = false;
     hitCooldown = false;
-    aggroRange = 140;
+    aggroRange = 80;
     isAggro = false;
 
     constructor(x, y) {

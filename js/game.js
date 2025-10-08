@@ -1,42 +1,11 @@
-// let canvas;
-// let world;
-// let keyboard = new Keyboard();
-
-
-// function init() {
-//     canvas = document.getElementById("canvas");
-//     world = new World(canvas, keyboard);
-// }
-
-
-
-
-// window.addEventListener('keydown', (e) => {
-//     if (e.keyCode === 39) keyboard.RIGHT = true;
-//     if (e.keyCode === 37) keyboard.LEFT = true;
-//     if (e.keyCode === 38) keyboard.UP = true;
-//     if (e.keyCode === 40) keyboard.DOWN = true;
-//     if (e.keyCode === 32) keyboard.SPACE = true;
-//     if (e.keyCode === 87) keyboard.W = true; // W key for climbing
-// });
-
-// window.addEventListener('keyup', (e) => {
-//     if (e.keyCode === 39) keyboard.RIGHT = false;
-//     if (e.keyCode === 37) keyboard.LEFT = false;
-//     if (e.keyCode === 38) keyboard.UP = false;
-//     if (e.keyCode === 40) keyboard.DOWN = false;
-//     if (e.keyCode === 32) keyboard.SPACE = false;
-//     if (e.keyCode === 87) keyboard.W = false; // W key for climbing
-// });
-
-// window.debugMode = true;
-
 let canvas;
 let world;
 let isGameStarting = true;
 let keyboard = new Keyboard();
 let screenMusic = new Audio('./audio/start-screen.mp3');
 let gameMusic = new Audio('./audio/background.mp3');
+let musicVolume = 0.08;
+let sfxVolume = 0.1;
 
 window.addEventListener('keydown', (e) => {
     if (isGameStarting) return;
@@ -60,44 +29,105 @@ window.addEventListener('keyup', (e) => {
 
 window.addEventListener('load', function() {
     playStartMusic();
-    // Nur Musik, KEINE World
+    showIntro();
 });
+
+function showIntro() {
+    const intro = document.getElementById('intro-screen');
+    const mainMenu = document.getElementById('main-menu');
+    
+    // Nach 2.5 Sekunden zum Hauptmenü wechseln
+    setTimeout(() => {
+        intro.classList.add('fade-out');
+        setTimeout(() => {
+            intro.style.display = 'none';
+            mainMenu.style.display = 'flex';
+        }, 500);
+    }, 2500);
+}
+
+function showSettings() {
+    clickButtonSound();
+    document.getElementById('main-menu').style.display = 'none';
+    document.getElementById('settings-overlay').style.display = 'flex';
+}
+
+function closeSettings() {
+    clickButtonSound();
+    document.getElementById('settings-overlay').style.display = 'none';
+    document.getElementById('main-menu').style.display = 'flex';
+}
+
+function showControls() {
+    clickButtonSound();
+    document.getElementById('main-menu').style.display = 'none';
+    document.getElementById('controls-overlay').style.display = 'flex';
+}
+
+function closeControls() {
+    clickButtonSound();
+    document.getElementById('controls-overlay').style.display = 'none';
+    document.getElementById('main-menu').style.display = 'flex';
+}
+
+function changeMusicVolume(value) {
+    musicVolume = value / 1000;
+    screenMusic.volume = musicVolume;
+    gameMusic.volume = musicVolume;
+    document.getElementById('music-volume').textContent = value + '%';
+}
+
+function changeSfxVolume(value) {
+    sfxVolume = value / 1000;
+    document.getElementById('sfx-volume').textContent = value + '%';
+}
 
 function init() {
     canvas = document.getElementById("canvas");
-    world = new World(canvas, keyboard );
+    world = new World(canvas, keyboard);
 }
 
 function playStartMusic() {
     screenMusic.currentTime = 0;
     screenMusic.play();
     screenMusic.loop = true;
-    screenMusic.volume = 0.08;
+    screenMusic.volume = musicVolume;
 }
 
 function playGameMusic() {
     setTimeout(() => {
-    gameMusic.currentTime = 0;
-    gameMusic.play();
-    gameMusic.loop = true;
-    gameMusic.volume = 0.08;
+        gameMusic.currentTime = 0;
+        gameMusic.play();
+        gameMusic.loop = true;
+        gameMusic.volume = musicVolume;
     }, 1000);
 }
 
-
-
-
-
 function startGame() {
-    const overlay = document.getElementById('overlay-start-screen');
-    const canvas = document.getElementById('canvas');
-    setTimeout(() => {
-        overlay.style.display = 'none';
-        isGameStarting = false;
-        canvas.style.filter = 'none';
-    }, 1000);
-    screenMusic.pause();
     clickButtonSound();
+    const mainMenu = document.getElementById('main-menu');
+    const canvas = document.getElementById('canvas');
+    
+    // Menü ausblenden
+    mainMenu.classList.add('fade-out');
+    
+    setTimeout(() => {
+        mainMenu.style.display = 'none';
+        
+        // Canvas Flash-Effekt
+        canvas.classList.add('canvas-flash');
+        
+        setTimeout(() => {
+            canvas.classList.remove('canvas-flash');
+            isGameStarting = false;
+            canvas.style.filter = 'none';
+            
+            // Spiel initialisieren
+            init();
+        }, 800);
+    }, 500);
+    
+    screenMusic.pause();
     playGameMusic();
 }
 
@@ -118,30 +148,47 @@ function showWinScreen() {
     stopGameMusic();
 }
 
-function restartGame(){
+function restartGame() {
+    clickButtonSound();
     const overlay = document.getElementById('overlay-dead-screen');
     const winOverlay = document.getElementById('overlay-win-screen');
     const canvas = document.getElementById('canvas');
+    
+    // Fade out overlays
+    overlay.classList.add('fade-out');
+    winOverlay.classList.add('fade-out');
+    
     setTimeout(() => {
         overlay.style.display = 'none';
         winOverlay.style.display = 'none';
-        canvas.style.filter = 'none';
-    }, 1000);
-    if (world) world.cleanup();
-    world = new World(canvas, keyboard);
-    clickButtonSound();
+        overlay.classList.remove('fade-out');
+        winOverlay.classList.remove('fade-out');
+        
+        // Canvas Flash
+        canvas.classList.add('canvas-flash');
+        
+        setTimeout(() => {
+            canvas.classList.remove('canvas-flash');
+            canvas.style.filter = 'none';
+            
+            // Cleanup und neu starten
+            if (world) world.cleanup();
+            world = new World(canvas, keyboard);
+        }, 800);
+    }, 500);
+    
     playGameMusic();
 }
 
 function clickButtonSound() {
     let clickSound = new Audio('./audio/click.mp3');
-    clickSound.volume = 0.1;
+    clickSound.volume = sfxVolume;
     clickSound.play();
 }
 
 function playGameOverSound() {
     let gameOverSound = new Audio('./audio/game-over.mp3');
-    gameOverSound.volume = 0.1;
+    gameOverSound.volume = sfxVolume;
     gameOverSound.play();
 }
 
