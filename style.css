@@ -25,7 +25,6 @@ body::before {
 canvas {
     background-color: rgb(0, 0, 0);
     display: block;
-    filter: blur(7px);
 }
 
 .canvas-frame {
@@ -424,6 +423,231 @@ button:active {
 
 .legal-notice-icon img {
     filter: drop-shadow(2px 2px 4px rgba(0, 0, 0, 0.5));
+}
+
+/* Legal Notice Content - Scrollbar nur für Text */
+#legal-notice .settings-content {
+    max-height: 156px;
+    overflow-y: auto;
+    padding-right: 10px;
+     max-width: 350px;
+}
+
+#legal-notice .settings-content::-webkit-scrollbar {
+    width: 8px;
+}
+
+#legal-notice .settings-content::-webkit-scrollbar-track {
+    background: #2a2a2a;
+    border: 2px solid #000;
+}
+
+#legal-notice .settings-content::-webkit-scrollbar-thumb {
+    background: #ffd700;
+    border: 1px solid #000;
+}
+
+#legal-notice .settings-content::-webkit-scrollbar-thumb:hover {
+    background: #ffed4e;
+}
+
+@media only screen and (max-width: 800px) {
+    .game-overlay {
+        height: -webkit-fill-available;
+        width: -webkit-fill-available;
+        margin-top: 0;
+    }
+
+    canvas,
+    .canvas-frame,
+    #intro-screen,
+    #main-menu,
+    #settings-overlay,
+    #controls-overlay,
+    #overlay-dead-screen,
+    #overlay-win-screen,
+    #legal-notice {
+        max-width: -webkit-fill-available;
+    }
+
+    .canvas-frame {
+        background: none;
+        padding: 0;
+        margin: 0;
+    }
+
+    .fullscreen-icon {
+        right: 10px;
+        bottom: 10px;
+    }
+
+    .legal-notice-icon {
+        top: 10px;
+        right: 10px;
+    }
+
+    .overlay-content {
+        display: flex;
+        flex-direction: column;
+        width: 90vw;
+        max-width: 90vw;
+        height: auto;
+        max-height: 85vh;
+        padding: 15px 20px;
+        box-sizing: border-box;
+    }
+
+    .settings-content,
+    .controls-content {
+        overflow-y: auto;
+        flex: 1;
+        min-height: 0;
+        margin: 15px 0; /* ✅ Reduziert von 30px */
+    }
+
+    h2 {
+        font-size: 28px; /* ✅ Kleiner */
+        margin: 0 0 10px 0; /* ✅ Weniger Abstand */
+    }
+
+    .menu-title {
+        font-size: 36px; /* ✅ Kleiner */
+        margin: 0 0 20px 0; /* ✅ Weniger Abstand */
+    }
+
+    .intro-title {
+        font-size: 48px; /* ✅ Kleiner */
+    }
+
+    button {
+        font-size: 16px;
+        padding: 8px 20px;
+    }
+
+    .menu-buttons {
+        gap: 12px; /* ✅ Weniger Abstand zwischen Buttons */
+    }
+
+    .settings-content p,
+    .controls-content p {
+        font-size: 16px;
+        margin: 10px 0; /* ✅ Reduziert von 15px */
+    }
+
+    p {
+        font-size: 18px;
+        margin: 10px 0; /* ✅ Weniger Abstand */
+    }
+
+    :fullscreen .game-overlay,
+    :-webkit-full-screen .game-overlay,
+    :fullscreen canvas,
+    :fullscreen .canvas-frame {
+        width: 100vw;
+        height: 100lvh;
+    }
+}
+
+@media only screen and (max-height: 480px) {
+    canvas,
+    .canvas-frame,
+    .game-overlay,
+    #intro-screen,
+    #main-menu,
+    #settings-overlay,
+    #controls-overlay,
+    #overlay-dead-screen,
+    #overlay-win-screen,
+    #legal-notice {
+        height: 100vh;
+        height: 100lvh;
+    }
+
+    .game-overlay {
+        margin-top: 0;
+    }
+
+    .canvas-frame {
+        background: none;
+        padding: 0;
+        margin: 0;
+    }
+
+    .fullscreen-icon {
+        right: 10px;
+        bottom: 10px;
+    }
+
+    .legal-notice-icon {
+        top: 10px;
+        right: 10px;
+    }
+
+    .overlay-content {
+        display: flex;
+        flex-direction: column;
+        width: 85vw;
+        max-width: 85vw;
+        height: auto;
+        max-height: 80vh;
+        padding: 20px 15px; /* ✅ Noch weniger Padding */
+        box-sizing: border-box;
+    }
+
+    .settings-content,
+    .controls-content {
+        overflow-y: auto;
+        flex: 1;
+        min-height: 0;
+        margin: 10px 0; /* ✅ Noch weniger Margin */
+    }
+
+    h2 {
+        font-size: 20px; /* ✅ Noch kleiner */
+        margin: 0 0 8px 0; /* ✅ Weniger Abstand */
+    }
+
+    .menu-title {
+        font-size: 24px; /* ✅ Noch kleiner */
+        margin: 0 0 12px 0; /* ✅ Weniger Abstand */
+    }
+
+    .intro-title {
+        font-size: 32px; /* ✅ Noch kleiner */
+    }
+
+    button {
+        font-size: 14px;
+        padding: 6px 15px;
+    }
+
+    .menu-buttons {
+        gap: 8px; /* ✅ Minimaler Abstand */
+    }
+
+    .settings-content p,
+    .controls-content p {
+        font-size: 16px;
+        margin: 8px 0; /* ✅ Minimal */
+    }
+
+    p {
+        font-size: 16px;
+        margin: 8px 0; /* ✅ Minimal */
+    }
+
+    .controls-row {
+        grid-template-columns: 1fr;
+        gap: 8px; /* ✅ Weniger Abstand */
+    }
+
+    :fullscreen .game-overlay,
+    :-webkit-full-screen .game-overlay,
+    :fullscreen canvas,
+    :fullscreen .canvas-frame {
+        width: 100vw;
+        height: 100dvh;
+    }
 }
 
     
