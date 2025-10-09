@@ -207,6 +207,7 @@ class Endboss extends MovableObject {
         if (this.AUDIO_HURT) {
             this.AUDIO_HURT.currentTime = 0;
             this.AUDIO_HURT.volume = 0.05;
+            this.AUDIO_HURT.volume = sfxVolume;
             this.AUDIO_HURT.play();
         }
     }

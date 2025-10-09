@@ -9,6 +9,7 @@ class World {
     energyBar = new EnergyBar();
     coin = new Coin();
     BACKGROUND_MUSIC = new Audio('./audio/background.mp3');
+    isRunning = true; // ✅ NEU
 
     constructor(canvas, keyboard) {
         this.ctx = canvas.getContext('2d');
@@ -17,6 +18,7 @@ class World {
         this.keyboard = keyboard;
         this.intervals = [];
         this.animationFrame = null;
+        this.isRunning = true; // ✅ NEU
         this.startEnemyMovement();
         this.draw();
         this.setWorld();
@@ -32,6 +34,7 @@ class World {
 
     checkCollisions() {
         this.addInterval(setInterval(() => {
+            if (!this.isRunning) return; // ✅ NEU
             this.checkCollectibles();
             this.checkEnemyInteractions();
         }, 50));
@@ -120,6 +123,8 @@ class World {
     }
 
     draw() {
+        if (!this.isRunning) return; // ✅ NEU: Stoppe sofort wenn cleanup aufgerufen
+        
         this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
         this.character.animate();
         this.level.enemies.forEach(enemy => {
@@ -152,7 +157,10 @@ class World {
         this.addToMap(this.statusBar);
         this.addToMap(this.energyBar);
         this.addToMap(this.coin);
-        requestAnimationFrame(() => { this.draw(); });
+        
+        if (this.isRunning) { // ✅ NEU: Nur weitermachen wenn noch aktiv
+            this.animationFrame = requestAnimationFrame(() => { this.draw(); });
+        }
     }
 
     addObjectsToMap(objects) {
@@ -182,19 +190,37 @@ class World {
     }
 
     cleanup() {
-        if (this.animationFrame) cancelAnimationFrame(this.animationFrame);
+        console.log('🧹 Cleanup started'); // ✅ Debug
+        
+        this.isRunning = false; // ✅ Stoppe ALLE Loops sofort
+        
+        if (this.animationFrame) {
+            cancelAnimationFrame(this.animationFrame);
+            this.animationFrame = null;
+        }
+        
         if (this.intervals) {
             this.intervals.forEach(interval => clearInterval(interval));
             this.intervals = [];
         }
+        
         if (this.BACKGROUND_MUSIC) {
             this.BACKGROUND_MUSIC.pause();
             this.BACKGROUND_MUSIC.currentTime = 0;
         }
+        
+        // Stoppe Character Audio
+        if (this.character.AUDIO_WALK) {
+            this.character.AUDIO_WALK.pause();
+            this.character.AUDIO_WALK.currentTime = 0;
+        }
+        
         this.level.enemies.forEach(enemy => {
             enemy.isAttacking = false;
             enemy.attackCooldown = false;
             enemy.attackStartTime = 0;
         });
+        
+        console.log('🧹 Cleanup completed'); // ✅ Debug
     }
 }

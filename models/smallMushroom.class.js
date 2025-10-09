@@ -16,7 +16,7 @@ class SmallMushroom extends MovableObject {
     rightBoundary = 0;
     direction = -1;
     energy = 100;
-    hitboxOffset = { x: 20, y: 10, width: -15, height: -10 };
+    hitboxOffset = { x: 30, y: 10, width: -30, height: -10 };
     AUDIO_HURT = new Audio('./audio/enemy-hurt.mp3');
     attackStartTime = 0;
     attackCooldown = false;
@@ -206,6 +206,7 @@ class SmallMushroom extends MovableObject {
         if (this.AUDIO_HURT) {
             this.AUDIO_HURT.currentTime = 0;
             this.AUDIO_HURT.volume = 0.05;
+            this.AUDIO_HURT.volume = sfxVolume;
             this.AUDIO_HURT.play();
         }
     }

@@ -25,8 +25,10 @@ class Character extends MovableObject {
 
     constructor() {
         super();
+        console.log('🦉 NEW CHARACTER - Energy:', this.energy);
         this.spaceKeyPressed = false;
         this.energyGreen = 100;
+        this.energy = 100;
         this.y = 340;
         this.setAudioVolume();
         this.loadSprites();
@@ -134,6 +136,7 @@ class Character extends MovableObject {
     handleJump() {
         if (this.world.keyboard.SPACE && !this.spaceKeyPressed && !this.isAboveGround() && !this.isJumping) {
             this.AUDIO_JUMP.currentTime = 0;
+            this.AUDIO_JUMP.volume = sfxVolume;
             this.AUDIO_JUMP.play();
             this.jump();
             this.spaceKeyPressed = true;
@@ -172,6 +175,7 @@ class Character extends MovableObject {
         const now = Date.now();
         if (now - this.walkAudioCooldown > 300) {
             this.AUDIO_WALK.currentTime = 0;
+            this.AUDIO_WALK.volume = sfxVolume;
             this.AUDIO_WALK.play();
             this.walkAudioCooldown = now;
         }
@@ -188,6 +192,7 @@ class Character extends MovableObject {
             if (this.energyGreen >= 20) {
                 this.attack();
                 this.AUDIO_ATTACK.currentTime = 0;
+                this.AUDIO_ATTACK.volume = sfxVolume;
                 this.AUDIO_ATTACK.play();
                 this.enterKeyPressed = true;
                 this.isWalking = false;

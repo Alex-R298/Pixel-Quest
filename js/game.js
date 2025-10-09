@@ -9,12 +9,12 @@ let sfxVolume = 0.1;
 
 window.addEventListener('keydown', (e) => {
     if (isGameStarting) return;
-    if (e.keyCode === 65) keyboard.A = true;      // A
-    if (e.keyCode === 68) keyboard.D = true;      // D
-    if (e.keyCode === 32) keyboard.SPACE = true;  // Space
-    if (e.keyCode === 87) keyboard.W = true;      // W
-    if (e.keyCode === 83) keyboard.S = true;      // S
-    if (e.keyCode === 13) keyboard.ENTER = true;  // Enter
+    if (e.keyCode === 65) keyboard.A = true;
+    if (e.keyCode === 68) keyboard.D = true;
+    if (e.keyCode === 32) keyboard.SPACE = true;
+    if (e.keyCode === 87) keyboard.W = true;
+    if (e.keyCode === 83) keyboard.S = true;
+    if (e.keyCode === 13) keyboard.ENTER = true;
 });
 
 window.addEventListener('keyup', (e) => {
@@ -27,23 +27,41 @@ window.addEventListener('keyup', (e) => {
     if (e.keyCode === 13) keyboard.ENTER = false;
 });
 
-window.addEventListener('load', function() {
+function init() {
     playStartMusic();
     showIntro();
-});
+}
 
 function showIntro() {
     const intro = document.getElementById('intro-screen');
     const mainMenu = document.getElementById('main-menu');
+    const menuTitle = mainMenu.querySelector('.menu-title');
+    const overlayContent = mainMenu.querySelector('.overlay-content');
+    const fullscreenIcon = document.querySelector('.fullscreen-icon');
+    const legalNoticeIcon = document.querySelector('.legal-notice-icon');
+    const menuButtons = mainMenu.querySelector('.menu-buttons');
     
-    // Nach 2.5 Sekunden zum Hauptmenü wechseln
     setTimeout(() => {
         intro.classList.add('fade-out');
+        
         setTimeout(() => {
             intro.style.display = 'none';
             mainMenu.style.display = 'flex';
+            fullscreenIcon.style.display = 'block'; 
+            legalNoticeIcon.style.display = 'block';
+            
+            menuTitle.style.opacity = '1';
+            
+            setTimeout(() => {
+                menuTitle.classList.add('slide-up');
+                
+                setTimeout(() => {
+                    overlayContent.classList.add('show');
+                    menuButtons.classList.add('show');
+                }, 800);
+            }, 500);
         }, 500);
-    }, 2500);
+    }, 2000);
 }
 
 function showSettings() {
@@ -82,11 +100,6 @@ function changeSfxVolume(value) {
     document.getElementById('sfx-volume').textContent = value + '%';
 }
 
-function init() {
-    canvas = document.getElementById("canvas");
-    world = new World(canvas, keyboard);
-}
-
 function playStartMusic() {
     screenMusic.currentTime = 0;
     screenMusic.play();
@@ -106,25 +119,32 @@ function playGameMusic() {
 function startGame() {
     clickButtonSound();
     const mainMenu = document.getElementById('main-menu');
-    const canvas = document.getElementById('canvas');
+    const canvasElement = document.getElementById('canvas');
+    document.querySelector('.legal-notice-icon').style.display = 'none';
     
-    // Menü ausblenden
     mainMenu.classList.add('fade-out');
     
     setTimeout(() => {
         mainMenu.style.display = 'none';
         
-        // Canvas Flash-Effekt
-        canvas.classList.add('canvas-flash');
+        // ✅ HIER: Smooth Fade zu Weiß
+        canvasElement.style.transition = 'background-color 0.6s cubic-bezier(0.4, 0, 0.2, 1), filter 0.6s cubic-bezier(0.4, 0, 0.2, 1)';
+        canvasElement.style.backgroundColor = '#ffffff';
+        canvasElement.style.filter = 'brightness(1.5)';
         
         setTimeout(() => {
-            canvas.classList.remove('canvas-flash');
             isGameStarting = false;
-            canvas.style.filter = 'none';
             
-            // Spiel initialisieren
-            init();
-        }, 800);
+            canvas = canvasElement;
+            world = new World(canvas, keyboard);
+            
+            // ✅ HIER: Smooth Fade von Weiß zu Schwarz
+            canvasElement.style.transition = 'background-color 1s cubic-bezier(0.4, 0, 0.2, 1), filter 1s cubic-bezier(0.4, 0, 0.2, 1)';
+            canvasElement.style.backgroundColor = 'rgb(0, 0, 0)';
+            canvasElement.style.filter = 'brightness(1)';
+            
+        }, 600); // ✅ Angepasst auf 600ms (gleich wie transition)
+        
     }, 500);
     
     screenMusic.pause();
@@ -133,8 +153,8 @@ function startGame() {
 
 function showDeadScreen() {
     const overlay = document.getElementById('overlay-dead-screen');
-    const canvas = document.getElementById('canvas');
-    canvas.style.filter = 'blur(7px)';
+    const canvasElement = document.getElementById('canvas');
+    canvasElement.style.filter = 'blur(7px)';
     overlay.style.display = 'flex';
     playGameOverSound();
     stopGameMusic();
@@ -142,8 +162,8 @@ function showDeadScreen() {
 
 function showWinScreen() {
     const overlay = document.getElementById('overlay-win-screen');
-    const canvas = document.getElementById('canvas');
-    canvas.style.filter = 'blur(7px)';
+    const canvasElement = document.getElementById('canvas');
+    canvasElement.style.filter = 'blur(7px)';
     overlay.style.display = 'flex';
     stopGameMusic();
 }
@@ -152,9 +172,16 @@ function restartGame() {
     clickButtonSound();
     const overlay = document.getElementById('overlay-dead-screen');
     const winOverlay = document.getElementById('overlay-win-screen');
-    const canvas = document.getElementById('canvas');
+    const canvasElement = document.getElementById('canvas');
     
-    // Fade out overlays
+    // ✅ Lösche Canvas nur wenn World existiert
+    if (world) {
+        const ctx = canvasElement.getContext('2d');
+        ctx.clearRect(0, 0, canvasElement.width, canvasElement.height);
+        world.cleanup();
+        world = null;
+    }
+    
     overlay.classList.add('fade-out');
     winOverlay.classList.add('fade-out');
     
@@ -164,17 +191,25 @@ function restartGame() {
         overlay.classList.remove('fade-out');
         winOverlay.classList.remove('fade-out');
         
-        // Canvas Flash
-        canvas.classList.add('canvas-flash');
         
+        // ✅ STEP 2: Warte kurz, dann starte Weiß-Fade
         setTimeout(() => {
-            canvas.classList.remove('canvas-flash');
-            canvas.style.filter = 'none';
+            canvasElement.style.transition = 'background-color 0.6s cubic-bezier(0.4, 0, 0.2, 1), filter 0.6s cubic-bezier(0.4, 0, 0.2, 1)';
+            canvasElement.style.backgroundColor = '#ffffff';
+            canvasElement.style.filter = 'brightness(1.5)';
             
-            // Cleanup und neu starten
-            if (world) world.cleanup();
-            world = new World(canvas, keyboard);
-        }, 800);
+            // ✅ STEP 3: Warte bis Weiß fertig ist, dann lade World
+            setTimeout(() => {
+                world = new World(canvasElement, keyboard);
+                
+                // ✅ STEP 4: Fade von Weiß zu Schwarz
+                canvasElement.style.transition = 'background-color 1s cubic-bezier(0.4, 0, 0.2, 1), filter 1s cubic-bezier(0.4, 0, 0.2, 1)';
+                canvasElement.style.backgroundColor = 'rgb(0, 0, 0)';
+                canvasElement.style.filter = 'brightness(1)';
+                
+            }, 600);
+        }, 50);
+        
     }, 500);
     
     playGameMusic();
@@ -195,6 +230,46 @@ function playGameOverSound() {
 function stopGameMusic() {
     gameMusic.pause();
     gameMusic.currentTime = 0;
+}
+
+function fullscreen() {
+  let fullscreen = document.getElementById("fullscreen");
+  enterFullscreen(fullscreen);
+  exitFullscreen();
+  clickButtonSound();
+  
+}
+
+function enterFullscreen(element) {
+  if(element.requestFullscreen) {
+    element.requestFullscreen();
+  } else if(element.msRequestFullscreen) {      // for IE11 (remove June 15, 2022)
+    element.msRequestFullscreen();
+  } else if(element.webkitRequestFullscreen) {  // iOS Safari
+    element.webkitRequestFullscreen();
+  }
+}
+
+function exitFullscreen() {
+  if(document.exitFullscreen) {
+    document.exitFullscreen();
+  } else if(document.webkitExitFullscreen) {
+    document.webkitExitFullscreen();
+  }
+}
+
+function showLegalNotice() {
+    clickButtonSound();
+    document.getElementById('main-menu').style.display = 'none';
+    document.getElementById('legal-notice').style.display = 'flex';
+    document.querySelector('.legal-notice-icon').style.display = 'none';
+}
+
+function closeLegalNotice() {
+    clickButtonSound();
+    document.getElementById('legal-notice').style.display = 'none';
+    document.getElementById('main-menu').style.display = 'flex';
+    document.querySelector('.legal-notice-icon').style.display = 'block';
 }
 
 window.debugMode = true;

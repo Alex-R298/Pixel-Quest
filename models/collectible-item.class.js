@@ -1,44 +1,3 @@
-// class CollectibleItem extends DrawableObject {
-//     coinSprite = null;
-//     currentFrame = 0;
-//     IMAGES_FOOD = [
-//         '../img/img/Objects/Food/Cake.png'
-//     ];
-
-//     constructor(x, y) {  // ✅ Parameter nicht vergessen!
-//         super();
-//         this.x = x;
-//         this.y = y;
-//         this.width = 40;
-//         this.height = 40;
-//         this.collectible = true;
-
-//         this.coinSprite = new Image();
-//         this.coinSprite.src = '../img/Objects_Animated/Coin.png';
-//         this.coinSprite.onload = () => {
-//             this.img = this.coinSprite;
-//             this.frameWidth = this.coinSprite.width / 8;
-//             this.frameHeight = this.coinSprite.height;
-//             this.totalFrames = 8;
-//         };
-
-
-
-//         this.animate();  // ✅ Animation starten
-//     }
-
-
-
-//     animate() {
-//         setInterval(() => {
-//             this.currentFrame++;
-//             if (this.currentFrame >= this.totalFrames) {
-//                 this.currentFrame = 0; // Zurück zum ersten Frame
-//             }
-//         }, 100);
-//     }
-// }
-
 class CollectibleItem extends DrawableObject {
     currentFrame = 0;
     type = 'coin'; // 'coin' oder 'food'
@@ -151,10 +110,12 @@ class CollectibleItem extends DrawableObject {
     onCollect(character) {
         if (this.type === 'coin') {
             this.COIN_SOUND.play();
+            this.COIN_SOUND.volume = sfxVolume;
             console.log("Coin collected! +1");
             // Sound abspielen, Partikel-Effekt, etc.
         } else if (this.type === 'food') {
             this.FOOD_SOUND.play();
+            this.FOOD_SOUND.volume = sfxVolume;
             character.energyGreen = Math.min(character.energyGreen + this.healAmount, 100);
             console.log(`Food collected! Healed ${this.healAmount} HP`);
         }

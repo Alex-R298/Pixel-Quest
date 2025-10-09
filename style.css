@@ -16,7 +16,7 @@ body::before {
     bottom: 0;
     background-image: url('../img/background/background.png');
     background-size: cover;
-    filter: blur(5px);
+    /* filter: blur(5px); */
     box-shadow: inset 0 0 100px rgba(0, 0, 0, 3);
     z-index: -1;
 }
@@ -43,6 +43,7 @@ canvas {
     url('../img/Frames/Frame_tile_10.png') bottom repeat-x;
     background-size: 32px 32px, 32px 32px, 32px 32px, 32px 32px, 
     calc(100% - 64px) 32px, 32px calc(100% - 64px), 32px calc(100% - 64px), calc(100% - 64px) 32px;
+    margin-top: 200px;
 }
 
 
@@ -271,17 +272,43 @@ button:active {
     margin: 10px 0 20px 0;
 }
 
+/* Controls Layout */
+.controls-content {
+    margin: 30px 0;
+    text-align: left;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.controls-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr; /* ✅ Zwei gleichgroße Spalten */
+    gap: 30px;
+    justify-items: start; /* ✅ Links ausgerichtet */
+}
+
+.controls-row p {
+    color: #fff8dc;
+    font-size: 18px;
+    margin: 0;
+    text-shadow: 2px 2px 0 #1a3024;
+    min-width: 200px;
+}
+
 .key {
     display: inline-block;
     background: linear-gradient(180deg, #5a8c6f 0%, #3d7a5a 100%);
     color: #ffd700;
-    padding: 4px 12px;
-    border: 2px solid #d4a574;
+    padding: 6px 14px;
+    border: 3px solid #8b7355;
     border-radius: 4px;
     font-weight: bold;
-    min-width: 60px;
+    min-width: 80px;
     text-align: center;
-    box-shadow: 2px 2px 0 #1a3024;
+    box-shadow: 
+        2px 2px 0 #2a3a1a,
+        inset 1px 1px 0 rgba(255, 255, 255, 0.2);
 }
 
 /* Canvas Flash Animation */
@@ -316,5 +343,87 @@ button:active {
     animation: fadeOut 0.5s ease-out forwards;
 }
 
+
+.fullscreen-icon {
+    position: absolute;
+    bottom: 10px;
+    right: 10px;
+    z-index: 15;
+    cursor: pointer;
+    width: 50px;
+    height: 50px;
+    opacity: 0.7;
+    transition: opacity 0.3s ease;
+}
+
+.fullscreen-icon:hover {
+    opacity: 1;
+}
+
+.fullscreen-icon img {
+    filter: drop-shadow(2px 2px 4px rgba(0, 0, 0, 0.5));
+}
+
+
+/* Fullscreen Styling */
+#fullscreen:fullscreen {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: black;
+    padding: 0;
+}
+
+#fullscreen:fullscreen canvas {
+    width: 100vw !important;
+    height: 100vh !important;
+    max-width: 100vw;
+    max-height: 100vh;
+    object-fit: contain; /* Behält das Seitenverhältnis */
+}
+
+#fullscreen:fullscreen .game-overlay {
+    width: 100vw;
+    height: 100vh;
+    margin-top: 0;
+}
+
+/* Für Safari/Webkit */
+#fullscreen:-webkit-full-screen {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: black;
+    padding: 0;
+}
+
+#fullscreen:-webkit-full-screen canvas {
+    width: 100vw !important;
+    height: 100vh !important;
+    max-width: 100vw;
+    max-height: 100vh;
+    object-fit: contain;
+}
+
+
+.legal-notice-icon {
+    position: absolute;
+    top: 36px;
+    right: 10px;
+    z-index: 15;
+    cursor: pointer;
+    width: 50px;
+    height: 50px;
+    opacity: 0.7;
+    transition: opacity 0.3s ease;
+}
+
+.legal-notice-icon:hover {
+    opacity: 1;
+}
+
+.legal-notice-icon img {
+    filter: drop-shadow(2px 2px 4px rgba(0, 0, 0, 0.5));
+}
 
     

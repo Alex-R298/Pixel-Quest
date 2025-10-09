@@ -24,9 +24,35 @@
     <script src="./js/game.js"></script>
 </head>
 <body onload="init();">
-    <h1>Welcome to Pixel Quest</h1>
 <section class="canvas-frame" id="fullscreen">
-    <!-- Intro Screen -->
+    <div class="fullscreen-icon" style="display: none;" onclick="fullscreen()">
+    <img src="img/Icons/fullscreen.png" alt="Fullscreen">
+</div>
+<div class=" legal-notice-icon" style="display: none;">
+            <img src="img/Icons/legal_notice.png" alt="Legal Notice" onclick="showLegalNotice()">
+            </div>
+<div id="legal-notice" class="game-overlay" style="display: none;">
+        <div class="overlay-content">
+            <h2>LEGAL NOTICE</h2>
+            <div class="settings-content">
+                <p><strong>Information according to § 5 DDG</strong></p>
+                <p>Alex Reitz<br>
+                Lerchenstr. 16<br>
+                73642 Welzheim<br>
+                Germany</p>
+                
+                <p><strong>Contact:</strong><br>
+                Email: alexreitz298@gmail.com</p>
+                
+                <p><strong>Copyright</strong><br>
+                The sounds are taken from Pixabay.</p>
+                
+                <p><strong>Privacy</strong><br>
+                This website does not collect, store, or process any personal data. No tracking tools or analytics services are used.</p>
+            </div>
+            <button onclick="closeLegalNotice()">BACK</button>
+        </div>
+    </div>
     <div id="intro-screen" class="game-overlay">
         <div class="intro-content">
             <h2 class="intro-title">PIXEL QUEST</h2>
@@ -59,22 +85,26 @@
         </div>
     </div>
 
-    <!-- Controls Overlay -->
-    <div id="controls-overlay" class="game-overlay" style="display: none;">
-        <div class="overlay-content">
-            <h2>CONTROLS</h2>
-            <div class="controls-content">
-                <p><span class="key">A</span> - Move Left</p>
-                <p><span class="key">D</span> - Move Right</p>
+   <div id="controls-overlay" class="game-overlay" style="display: none;">
+    <div class="overlay-content">
+        <h2>CONTROLS</h2>
+        <div class="controls-content">
+            <div class="controls-row">
                 <p><span class="key">W</span> - Climb</p>
+                <p><span class="key">A</span> - Move Left</p>
+            </div>
+            <div class="controls-row">
                 <p><span class="key">S</span> - Climb Down</p>
+                <p><span class="key">D</span> - Move Right</p>
+            </div>
+            <div class="controls-row">
                 <p><span class="key">SPACE</span> - Jump</p>
                 <p><span class="key">ENTER</span> - Attack</p>
             </div>
-            <button onclick="closeControls()">BACK</button>
         </div>
+        <button onclick="closeControls()">BACK</button>
     </div>
-
+</div>
     <!-- Game Over Screen -->
     <div id="overlay-dead-screen" class="game-overlay" style="display: none;">
         <div class="overlay-content">
@@ -92,7 +122,6 @@
             <button onclick="restartGame()">Play Again</button>
         </div>
     </div>
-
     <canvas id="canvas" width="720" height="480"></canvas>
 </section>
 </body>

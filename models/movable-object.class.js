@@ -108,6 +108,7 @@ class MovableObject extends DrawableObject {
         if (this.AUDIO_HURT) {
             this.AUDIO_HURT.currentTime = 0;
             this.AUDIO_HURT.volume = 0.1;
+            this.AUDIO_HURT.volume = sfxVolume;
             this.AUDIO_HURT.play();
         }
         
