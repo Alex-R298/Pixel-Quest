@@ -13,7 +13,7 @@ class Coin extends DrawableObject {
         this.totalFrames = 8;
         this.currentFrame = 0;
         this.img = new Image();
-        this.img.src = '../img/Objects_Animated/Coin.png';
+        this.img.src = './img/Objects_Animated/Coin.png';
         this.img.onload = () => {
             this.frameWidth = this.img.width / this.totalFrames;
             this.frameHeight = this.img.height;

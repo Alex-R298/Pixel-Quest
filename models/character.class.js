@@ -62,20 +62,20 @@ class Character extends MovableObject {
      */
     loadSprites() {
         this.idleSprite = new Image();
-        this.idleSprite.src = '../img/Owlet_Monster/Idle.png';
+        this.idleSprite.src = './img/Owlet_Monster/Idle.png';
         this.idleSprite.onload = () => this.setIdleSprite();
         this.walkingSprite = new Image();
-        this.walkingSprite.src = '../img/Owlet_Monster/Run.png';
+        this.walkingSprite.src = './img/Owlet_Monster/Run.png';
         this.jumpSprite = new Image();
-        this.jumpSprite.src = '../img/Owlet_Monster/Jump.png';
+        this.jumpSprite.src = './img/Owlet_Monster/Jump.png';
         this.deadSprite = new Image();
-        this.deadSprite.src = '../img/Owlet_Monster/Death.png';
+        this.deadSprite.src = './img/Owlet_Monster/Death.png';
         this.hurtSprite = new Image();
-        this.hurtSprite.src = '../img/Owlet_Monster/Hurt.png';
+        this.hurtSprite.src = './img/Owlet_Monster/Hurt.png';
         this.attackSprite = new Image();
-        this.attackSprite.src = '../img/Owlet_Monster/Attack2.png';
+        this.attackSprite.src = './img/Owlet_Monster/Attack2.png';
         this.climbingSprite = new Image();
-        this.climbingSprite.src = '../img/Owlet_Monster/Owlet_Monster_Climb_4.png';
+        this.climbingSprite.src = './img/Owlet_Monster/Owlet_Monster_Climb_4.png';
         if (!this.isDead) this.img = this.idleSprite;
     }
 
