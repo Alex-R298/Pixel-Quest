@@ -4,7 +4,7 @@ let isGameStarting = true;
 let keyboard = new Keyboard();
 let screenMusic = new Audio('audio/start-screen.mp3');
 let gameMusic = new Audio('audio/background.mp3');
-let musicVolume = 0.08;
+let musicVolume = 0;
 let sfxVolume = 0.08;
 
 

@@ -181,6 +181,9 @@ function changeMusicVolume(value) {
     screenMusic.volume = musicVolume;
     gameMusic.volume = musicVolume;
     document.getElementById('music-volume').textContent = value + '%';
+    if (value > 0 && screenMusic.paused) {
+        playStartMusic();
+    }
 }
 
 
