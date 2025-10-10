@@ -1,5 +1,9 @@
 class Coin extends DrawableObject {
     collectedCoins = 0;
+
+    /**
+     * Creates a new Coin counter instance
+     */
     constructor() {
         super();
         this.x = 10;
@@ -19,6 +23,9 @@ class Coin extends DrawableObject {
     }
 
 
+    /**
+     * Animates the coin sprite by cycling through frames
+     */
     animate() {
         setInterval(() => {
             this.currentFrame = (this.currentFrame + 1) % this.totalFrames;
@@ -42,4 +49,4 @@ class Coin extends DrawableObject {
         ctx.strokeText(text, textX, textY);
         ctx.fillText(text, textX, textY);
     }
-} 
+}

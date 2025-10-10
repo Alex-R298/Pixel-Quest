@@ -26,6 +26,12 @@ class CollectibleItem extends DrawableObject {
     FOOD_SOUND = new Audio('./audio/food.mp3', 'food');
 
 
+    /**
+     * Creates a new CollectibleItem instance
+     * @param {number} x - X coordinate position
+     * @param {number} y - Y coordinate position
+     * @param {string} [type='coin'] - Type of collectible ('coin' or 'food')
+     */
     constructor(x, y, type = 'coin') {
         super();
         this.x = x;
@@ -42,6 +48,9 @@ class CollectibleItem extends DrawableObject {
     }
 
 
+    /**
+     * Sets up coin properties and animation
+     */
     setupCoin() {
         this.width = 40;
         this.height = 40;
@@ -58,6 +67,9 @@ class CollectibleItem extends DrawableObject {
     }
 
 
+    /**
+     * Sets up food properties and bounce animation
+     */
     setupFood() {
         this.width = 20;
         this.height = 20;
@@ -79,6 +91,9 @@ class CollectibleItem extends DrawableObject {
     }
 
 
+    /**
+     * Animates coin sprite frames
+     */
     animate() {
         if (this.type === 'coin') {
             setInterval(() => {
