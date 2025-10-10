@@ -20,111 +20,170 @@
     <script src="./models/platform.class.js"></script>
     <script src="./models/level.class.js"></script>
     <script src="./models/levels/level1.js"></script>
-     <script src="./models/world.class.js"></script>
+    <script src="./models/world.class.js"></script>
+    <script src="./js/game-ui.js"></script>
     <script src="./js/game.js"></script>
 </head>
+
+
 <body onload="init();">
-<section class="canvas-frame" id="fullscreen">
-    <div class="fullscreen-icon" style="display: none;" onclick="fullscreen()">
-    <img src="img/Icons/fullscreen.png" alt="Fullscreen">
-</div>
-<div class=" legal-notice-icon" style="display: none;">
-            <img src="img/Icons/legal_notice.png" alt="Legal Notice" onclick="showLegalNotice()">
-            </div>
-<div id="legal-notice" class="game-overlay" style="display: none;">
-        <div class="overlay-content">
-            <h2>LEGAL NOTICE</h2>
-            <div class="settings-content">
-                <p><strong>Information according to § 5 DDG</strong></p>
-                <p>Alex Reitz<br>
-                Lerchenstr. 16<br>
-                73642 Welzheim<br>
-                Germany</p>
-                
-                <p><strong>Contact:</strong><br>
-                Email: alexreitz298@gmail.com</p>
-                
-                <p><strong>Copyright</strong><br>
-                The sounds are taken from Pixabay.</p>
-                
-                <p><strong>Privacy</strong><br>
-                This website does not collect, store, or process<br>
-                any personal data. No tracking tools or analytics<br>
-                services are used.</p>
-            </div>
-            <button onclick="closeLegalNotice()">BACK</button>
+    <section class="canvas-frame" id="fullscreen">
+        <div class="fullscreen-icon d_none" onclick="fullscreen()">
+            <img src="./img/Icons/fullscreen.png" alt="Fullscreen">
         </div>
-    </div>
-    <div id="intro-screen" class="game-overlay">
-        <div class="intro-content">
-            <h2 class="intro-title">PIXEL QUEST</h2>
-        </div>
-    </div>
 
-    <!-- Main Menu -->
-    <div id="main-menu" class="game-overlay" style="display: none;">
-        <div class="overlay-content">
-            <h2 class="menu-title">PIXEL QUEST</h2>
-            <div class="menu-buttons">
-                <button onclick="showSettings()">SETTINGS</button>
-                <button onclick="showControls()">CONTROLS</button>
-                <button onclick="startGame()">START GAME</button>
-            </div>
+        <div class="legal-notice-icon d_none">
+            <img src="./img/Icons/legal_notice.png" alt="Legal Notice" onclick="showLegalNotice()">
         </div>
-    </div>
 
-    <!-- Settings Overlay -->
-    <div id="settings-overlay" class="game-overlay" style="display: none;">
-        <div class="overlay-content">
-            <h2>SETTINGS</h2>
-            <div class="settings-content">
-                <p>Music Volume: <span id="music-volume">80%</span></p>
-                <input type="range" min="0" max="100" value="80" onchange="changeMusicVolume(this.value)">
-                <p>Sound Effects: <span id="sfx-volume">100%</span></p>
-                <input type="range" min="0" max="100" value="100" onchange="changeSfxVolume(this.value)">
-            </div>
-            <button onclick="closeSettings()">BACK</button>
+        <div class="back-menu d_none">
+            <img src="./img/Icons/menu.png" alt="Back" onclick="backMenu()">
         </div>
-    </div>
 
-   <div id="controls-overlay" class="game-overlay" style="display: none;">
-    <div class="overlay-content">
-        <h2>CONTROLS</h2>
-        <div class="controls-content">
-            <div class="controls-row">
-                <p><span class="key">W</span> - Climb</p>
-                <p><span class="key">A</span> - Move Left</p>
-            </div>
-            <div class="controls-row">
-                <p><span class="key">S</span> - Climb Down</p>
-                <p><span class="key">D</span> - Move Right</p>
-            </div>
-            <div class="controls-row">
-                <p><span class="key">SPACE</span> - Jump</p>
-                <p><span class="key">ENTER</span> - Attack</p>
-            </div>
-        </div>
-        <button onclick="closeControls()">BACK</button>
-    </div>
-</div>
-    <!-- Game Over Screen -->
-    <div id="overlay-dead-screen" class="game-overlay" style="display: none;">
-        <div class="overlay-content">
-            <h2>GAME OVER</h2>
-            <p>Press "Restart" to try again!</p>
-            <button onclick="restartGame()">Restart</button>
-        </div>
-    </div>
 
-    <!-- Win Screen -->
-    <div id="overlay-win-screen" class="game-overlay" style="display: none;">
-        <div class="overlay-content">
-            <h2>YOU WIN!</h2>
-            <p>Congratulations on completing Pixel Quest!</p>
-            <button onclick="restartGame()">Play Again</button>
+        <div id="mobile-controls" class="mobile-controls d_none">
+            <div class="mobile-left">
+                <button id="btn_climb_up" class="mobile-btn mobile-top">
+                    <img src="./img/Icons/climb_up_mobile.png" alt="Climb Up">
+                </button>
+                <div class="mobile-horizontal">
+                    <button id="btn_left" class="mobile-btn mobile-left-btn">
+                        <img src="./img/Icons/left_mobile.png" alt="Left">
+                    </button>
+                    <button id="btn_climb_down" class="mobile-btn mobile-bottom">
+                        <img src="./img/Icons/climb_down_mobile.png" alt="Climb Down">
+                    </button>
+                    <button id="btn_right" class="mobile-btn mobile-right-btn">
+                        <img src="./img/Icons/right_mobile.png" alt="Right">
+                    </button>
+                </div>
+            </div>
+            
+            <div class="mobile-right">
+                <button id="btn_jump" class="mobile-btn">
+                    <img src="./img/Icons/jump_mobile.png" alt="Jump">
+                </button>
+                <button id="btn_attack" class="mobile-btn">
+                    <img src="./img/Icons/attack_mobile.png" alt="Attack">
+                </button>
+            </div>
         </div>
-    </div>
-    <canvas id="canvas" width="720" height="480"></canvas>
-</section>
+
+
+        <div id="legal-notice" class="game-overlay d_none">
+            <div class="overlay-content">
+                <h2>LEGAL NOTICE</h2>
+                <div class="settings-content">
+                    <p><strong>Information according to § 5 DDG</strong></p>
+                    <p>
+                        Alex Reitz<br>
+                        Lerchenstr. 16<br>
+                        73642 Welzheim<br>
+                        Germany
+                    </p>
+                    
+                    <p>
+                        <strong>Contact:</strong><br>
+                        Email: alexreitz298@gmail.com
+                    </p>
+                    
+                    <p>
+                        <strong>Copyright</strong><br>
+                        The sounds are taken from Pixabay.
+                    </p>
+                    
+                    <p>
+                        <strong>Privacy</strong><br>
+                        This website does not collect, store, or process<br>
+                        any personal data. No tracking tools or analytics<br>
+                        services are used.
+                    </p>
+                </div>
+                <button onclick="closeLegalNotice()">BACK</button>
+            </div>
+        </div>
+
+
+        <div id="intro-screen" class="game-overlay">
+            <div class="intro-content">
+                <h2 class="intro-title">PIXEL QUEST</h2>
+            </div>
+        </div>
+
+
+        <div id="main-menu" class="game-overlay d_none">
+            <div class="overlay-content">
+                <h2 class="menu-title">PIXEL QUEST</h2>
+                <div class="menu-buttons">
+                    <button onclick="showSettings()">SETTINGS</button>
+                    <button onclick="showControls()">CONTROLS</button>
+                    <button onclick="startGame(event)">START GAME</button>
+                </div>
+            </div>
+        </div>
+
+
+        <div id="settings-overlay" class="game-overlay d_none">
+            <div class="overlay-content">
+                <h2>SETTINGS</h2>
+                <div class="settings-content">
+                    <p>Music Volume: <span id="music-volume">80%</span></p>
+                    <input type="range" min="0" max="100" value="80" onchange="changeMusicVolume(this.value)">
+                    <p>Sound Effects: <span id="sfx-volume">100%</span></p>
+                    <input type="range" min="0" max="100" value="100" onchange="changeSfxVolume(this.value)">
+                </div>
+                <button onclick="closeSettings()">BACK</button>
+            </div>
+        </div>
+
+
+        <div id="controls-overlay" class="game-overlay d_none">
+            <div class="overlay-content">
+                <h2>CONTROLS</h2>
+                <div class="controls-content">
+                    <div class="controls-row">
+                        <p><span class="key">W</span> - Climb</p>
+                        <p><span class="key">A</span> - Move Left</p>
+                    </div>
+                    <div class="controls-row">
+                        <p><span class="key">S</span> - Climb Down</p>
+                        <p><span class="key">D</span> - Move Right</p>
+                    </div>
+                    <div class="controls-row">
+                        <p><span class="key">SPACE</span> - Jump</p>
+                        <p><span class="key">ENTER</span> - Attack</p>
+                    </div>
+                </div>
+                <button onclick="closeControls()">BACK</button>
+            </div>
+        </div>
+
+
+        <div id="overlay-dead-screen" class="game-overlay d_none">
+            <div class="overlay-content">
+                <h2>GAME OVER</h2>
+                <p>Press "Restart" to try again!</p>
+                <button onclick="restartGame(event)">Restart</button>
+            </div>
+        </div>
+
+
+        <div id="overlay-win-screen" class="game-overlay d_none">
+            <div class="overlay-content">
+                <h2>YOU WIN!</h2>
+                <p>Congratulations on completing Pixel Quest!</p>
+                <button onclick="restartGame(event)">Play Again</button>
+            </div>
+        </div>
+
+
+        <canvas id="canvas" width="720" height="480"></canvas>
+    </section>
+
+
+    <section id="orientation_warning" class="orientation-warning d_none">
+        <img src="./img/Icons/orientation.png" alt="Turn">
+        <p>Please turn your device to play</p>
+    </section>
 </body>
 </html>

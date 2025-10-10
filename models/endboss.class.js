@@ -18,12 +18,18 @@ class Endboss extends MovableObject {
     energy = 250;
     hitboxOffset = { x: 15, y: 30, width: 15, height: -30 };
     AUDIO_HURT = new Audio('./audio/boss-hurt.mp3');
-    attackStartTime = 0; 
+    attackStartTime = 0;
     attackCooldown = false;
     hitCooldown = false;
     aggroRange = 200;
     isAggro = false;
 
+
+    /**
+     * Creates a new Endboss instance
+     * @param {number} x - X coordinate
+     * @param {number} y - Y coordinate
+     */
     constructor(x, y) {
         super();
         this.hasDealtDamage = false;
@@ -34,6 +40,12 @@ class Endboss extends MovableObject {
         }, 1000 / 60);
     }
 
+
+    /**
+     * Initializes the endboss position and movement parameters
+     * @param {number} x - X coordinate
+     * @param {number} y - Y coordinate
+     */
     initializePosition(x, y) {
         this.x = x;
         this.y = y;
@@ -45,6 +57,10 @@ class Endboss extends MovableObject {
         this.direction = -1;
     }
 
+
+    /**
+     * Loads all sprite images for the endboss
+     */
     loadSprites() {
         this.walkingSprite = this.createSprite('../img/Huge mushroom/HugeMushroom_walk.png', 6);
         this.attackSprite = this.createSprite('../img/Huge mushroom/HugeMushroom_attack2.png', 4);
@@ -53,6 +69,13 @@ class Endboss extends MovableObject {
         this.img = this.walkingSprite;
     }
 
+
+    /**
+     * Creates a sprite with specified frames
+     * @param {string} src - Image source path
+     * @param {number} frames - Number of frames in sprite
+     * @returns {Image} The created sprite image
+     */
     createSprite(src, frames) {
         const sprite = new Image();
         sprite.onload = () => {
@@ -65,12 +88,21 @@ class Endboss extends MovableObject {
         return sprite;
     }
 
+
+    /**
+     * Main animation loop for the endboss
+     */
     animateEnemy() {
         if (this.handleDeath()) return;
         if (!this.isDead) this.updateSprite();
         this.advanceFrame();
     }
 
+
+    /**
+     * Handles death state and transitions
+     * @returns {boolean} True if boss is dead or dying
+     */
     handleDeath() {
         if (this.energy <= 0 && !this.isDead) {
             if (!this.deadSprite?.complete) {
@@ -83,6 +115,10 @@ class Endboss extends MovableObject {
         return false;
     }
 
+
+    /**
+     * Sets the endboss to dead state
+     */
     setDeadState() {
         this.isDead = true;
         this.isMoving = false;
@@ -91,6 +127,10 @@ class Endboss extends MovableObject {
         this.currentFrame = 0;
     }
 
+
+    /**
+     * Updates the current sprite based on state
+     */
     updateSprite() {
         if (this.isHurt && this.hurtSprite.complete) {
             this.setSprite(this.hurtSprite, 4);
@@ -102,6 +142,12 @@ class Endboss extends MovableObject {
         }
     }
 
+
+    /**
+     * Sets the current sprite and frame parameters
+     * @param {Image} sprite - The sprite to set
+     * @param {number} frames - Number of frames in sprite
+     */
     setSprite(sprite, frames) {
         if (this.img !== sprite) {
             this.img = sprite;
@@ -111,6 +157,10 @@ class Endboss extends MovableObject {
         }
     }
 
+
+    /**
+     * Advances to the next animation frame
+     */
     advanceFrame() {
         const currentTime = Date.now();
         if (currentTime - this.lastFrameTime < this.animationSpeed) return;
@@ -124,12 +174,20 @@ class Endboss extends MovableObject {
         this.lastFrameTime = currentTime;
     }
 
+
+    /**
+     * Advances frame for death animation
+     */
     advanceDeadFrame() {
         if (this.currentFrame < this.totalFrames - 1) {
             this.currentFrame++;
         }
     }
 
+
+    /**
+     * Advances frame for action animations
+     */
     advanceActionFrame() {
         if (this.currentFrame < this.totalFrames - 1) {
             this.currentFrame++;
@@ -138,6 +196,10 @@ class Endboss extends MovableObject {
         }
     }
 
+
+    /**
+     * Finishes current action and resets state
+     */
     finishAction() {
         if (this.isHurt) {
             this.isHurt = false;
@@ -147,6 +209,10 @@ class Endboss extends MovableObject {
         this.currentFrame = 0;
     }
 
+
+    /**
+     * Advances frame for looping animations
+     */
     advanceLoopFrame() {
         this.currentFrame++;
         if (this.currentFrame >= this.totalFrames) {
@@ -154,24 +220,38 @@ class Endboss extends MovableObject {
         }
     }
 
+
+    /**
+     * Handles endboss movement behavior
+     */
     move() {
         if (this.isDead || this.isHurt || this.isAttacking) return;
-        if (!this.isMoving && !this.isWalking) {
-            this.startWalking();
-        }
-        if (this.world && this.world.character && !this.world.character.isDead) {
-            const distanceToPlayer = Math.abs(this.x - this.world.character.x);
-            const aggroThreshold = this.isAggro ? this.aggroRange + 30 : this.aggroRange;
-            if (distanceToPlayer <= aggroThreshold) {
-                this.chasePlayer();
-                this.isAggro = true;
-                return;
-            }
+        if (!this.isMoving && !this.isWalking) this.startWalking();
+        if (this.shouldChasePlayer()) {
+            this.chasePlayer();
+            this.isAggro = true;
+            return;
         }
         this.patrol();
         this.isAggro = false;
     }
 
+
+    /**
+     * Checks if endboss should chase player
+     * @returns {boolean} True if player is in aggro range
+     */
+    shouldChasePlayer() {
+        if (!this.world || !this.world.character || this.world.character.isDead) return false;
+        const distanceToPlayer = Math.abs(this.x - this.world.character.x);
+        const aggroThreshold = this.isAggro ? this.aggroRange + 30 : this.aggroRange;
+        return distanceToPlayer <= aggroThreshold;
+    }
+
+
+    /**
+     * Makes endboss chase the player
+     */
     chasePlayer() {
         const playerX = this.world.character.x;
         if (playerX < this.x) {
@@ -185,6 +265,10 @@ class Endboss extends MovableObject {
         }
     }
 
+
+    /**
+     * Handles patrol movement within boundaries
+     */
     patrol() {
         if (this.knockbackActive) return;
         this.x += this.speed * this.direction;
@@ -194,6 +278,11 @@ class Endboss extends MovableObject {
         }
     }
 
+
+    /**
+     * Applies damage to the endboss
+     * @param {number} damage - Amount of damage to apply
+     */
     takeDamageEnemy(damage) {
         if (this.isDead) return;
         this.energy -= damage;
@@ -203,6 +292,10 @@ class Endboss extends MovableObject {
         this.stopWalking();
     }
 
+
+    /**
+     * Plays hurt sound effect
+     */
     playHurtSound() {
         if (this.AUDIO_HURT) {
             this.AUDIO_HURT.currentTime = 0;
@@ -212,6 +305,10 @@ class Endboss extends MovableObject {
         }
     }
 
+
+    /**
+     * Initiates attack animation
+     */
     attackEnemy() {
         if (!this.isAttacking && !this.isDead) {
             this.isAttacking = true;
@@ -219,26 +316,33 @@ class Endboss extends MovableObject {
         }
     }
 
+
+    /**
+     * Gets the attack hitbox based on direction
+     * @returns {Object} Hitbox with x, y, width, height properties
+     */
     getAttackHitbox() {
         const attackWidth = 50;
         const attackHeight = 80;
         if (this.otherDirection) {
             return {
                 x: this.x + this.width,
-                y: this.y + 40,
-                width: attackWidth,
-                height: attackHeight
+                y: this.y + 40, width: attackWidth, height: attackHeight
             };
         } else {
             return {
                 x: this.x - attackWidth,
-                y: this.y + 40,
-                width: attackWidth,
-                height: attackHeight
+                y: this.y + 40, width: attackWidth, height: attackHeight
             };
         }
     }
 
+
+    /**
+     * Checks if attack is hitting a target
+     * @param {Object} target - Target object with position and size
+     * @returns {boolean} True if attack hits target
+     */
     isAttackHitting(target) {
         if (!this.isAttacking) return false;
         const attackBox = this.getAttackHitbox();
@@ -248,6 +352,10 @@ class Endboss extends MovableObject {
                target.y < attackBox.y + attackBox.height;
     }
 
+
+    /**
+     * Starts walking animation and movement
+     */
     startWalking() {
         if (!this.isDead) {
             this.isWalking = true;
@@ -256,6 +364,10 @@ class Endboss extends MovableObject {
         }
     }
 
+
+    /**
+     * Stops walking animation and movement
+     */
     stopWalking() {
         this.isWalking = false;
         this.isMoving = false;

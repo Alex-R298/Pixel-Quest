@@ -14,7 +14,7 @@ class Cloud extends MovableObject {
     animateClouds() {
         setInterval(() => {
             this.x -= this.speed;
-        }, 1000 / 60); // 60 FPS
+        }, 1000 / 60);
     }
 
 }

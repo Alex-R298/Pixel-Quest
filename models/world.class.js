@@ -9,8 +9,14 @@ class World {
     energyBar = new EnergyBar();
     coin = new Coin();
     BACKGROUND_MUSIC = new Audio('./audio/background.mp3');
-    isRunning = true; // ✅ NEU
+    isRunning = true;
 
+
+    /**
+     * Creates a new World instance
+     * @param {HTMLCanvasElement} canvas - The game canvas
+     * @param {Keyboard} keyboard - Keyboard input handler
+     */
     constructor(canvas, keyboard) {
         this.ctx = canvas.getContext('2d');
         this.level = createLevel1();
@@ -18,13 +24,17 @@ class World {
         this.keyboard = keyboard;
         this.intervals = [];
         this.animationFrame = null;
-        this.isRunning = true; // ✅ NEU
+        this.isRunning = true;
         this.startEnemyMovement();
         this.draw();
         this.setWorld();
         this.checkCollisions();
     }
 
+
+    /**
+     * Sets world reference for character and enemies
+     */
     setWorld() {
         this.character.world = this;
         this.level.enemies.forEach(enemy => {
@@ -32,39 +42,90 @@ class World {
         });
     }
 
+
+    /**
+     * Starts collision checking interval
+     */
     checkCollisions() {
         this.addInterval(setInterval(() => {
-            if (!this.isRunning) return; // ✅ NEU
+            if (!this.isRunning) return;
             this.checkCollectibles();
             this.checkEnemyInteractions();
         }, 50));
     }
 
+
+    /**
+     * Checks and handles all enemy interactions
+     */
     checkEnemyInteractions() {
         this.level.enemies.forEach(enemy => {
             if (enemy.isDead) return;
-            const isColliding = enemy.isColliding(this.character);
-            if (isColliding && !this.character.isDead) {
-                this.handleEnemyAttack(enemy);
-            } else if (enemy.isAttacking) {
-                enemy.isAttacking = false;
-                if (!enemy.isHurt) enemy.startWalking();
-            }
-            if (this.character.isAttacking && !enemy.isHurt && !enemy.hitCooldown) {
-                if (this.character.isAttackHitting(enemy)) {
-                    this.handlePlayerAttack(enemy);
-                }
-            }
+            this.handleEnemyCollision(enemy);
+            this.handlePlayerAttackCheck(enemy);
         });
     }
 
+
+    /**
+     * Handles collision between enemy and character
+     * @param {MovableObject} enemy - The enemy to check
+     */
+    handleEnemyCollision(enemy) {
+        const isColliding = enemy.isColliding(this.character);
+        if (isColliding && !this.character.isDead) {
+            this.handleEnemyAttack(enemy);
+        } else if (enemy.isAttacking) {
+            enemy.isAttacking = false;
+            if (!enemy.isHurt) enemy.startWalking();
+        }
+    }
+
+
+    /**
+     * Checks if player attack hits enemy
+     * @param {MovableObject} enemy - The enemy to check
+     */
+    handlePlayerAttackCheck(enemy) {
+        if (this.character.isAttacking && !enemy.isHurt && !enemy.hitCooldown) {
+            if (this.character.isAttackHitting(enemy)) {
+                this.handlePlayerAttack(enemy);
+            }
+        }
+    }
+
+
+    /**
+     * Handles enemy attack on character
+     * @param {MovableObject} enemy - The attacking enemy
+     */
     handleEnemyAttack(enemy) {
         const currentTime = Date.now();
+        this.initiateEnemyAttack(enemy, currentTime);
+        this.executeEnemyAttack(enemy, currentTime);
+    }
+
+
+    /**
+     * Initiates enemy attack state
+     * @param {MovableObject} enemy - The attacking enemy
+     * @param {number} currentTime - Current timestamp
+     */
+    initiateEnemyAttack(enemy, currentTime) {
         if (!enemy.isAttacking) {
             enemy.isAttacking = true;
             enemy.attackStartTime = currentTime;
             enemy.stopWalking();
         }
+    }
+
+
+    /**
+     * Executes enemy attack damage
+     * @param {MovableObject} enemy - The attacking enemy
+     * @param {number} currentTime - Current timestamp
+     */
+    executeEnemyAttack(enemy, currentTime) {
         const attackDelay = enemy instanceof Endboss ? 400 : 300;
         const cooldownTime = enemy instanceof Endboss ? 1500 : 2000;
         if (!enemy.attackCooldown && currentTime - enemy.attackStartTime >= attackDelay) {
@@ -77,20 +138,52 @@ class World {
         }
     }
 
+
+    /**
+     * Handles player attack on enemy
+     * @param {MovableObject} enemy - The attacked enemy
+     */
     handlePlayerAttack(enemy) {
         enemy.takeDamageEnemy(50);
         const knockbackDirection = this.character.otherDirection ? -1 : 1;
         const wasMoving = enemy.isMoving;
+        this.applyKnockback(enemy, knockbackDirection);
+        this.setAttackCooldowns(enemy, wasMoving);
+    }
+
+
+    /**
+     * Applies knockback effect to enemy
+     * @param {MovableObject} enemy - The enemy to knockback
+     * @param {number} direction - Knockback direction
+     */
+    applyKnockback(enemy, direction) {
         enemy.stopWalking();
-        enemy.x += knockbackDirection * 30;
+        enemy.x += direction * 30;
         enemy.leftBoundary = enemy.x - 60;
         enemy.rightBoundary = enemy.x + 60;
         enemy.knockbackActive = true;
-        setTimeout(() => { enemy.knockbackActive = false; if (wasMoving && !enemy.isDead && !enemy.isHurt) enemy.startWalking(); }, 400);
+    }
+
+
+    /**
+     * Sets attack cooldowns for enemy
+     * @param {MovableObject} enemy - The attacked enemy
+     * @param {boolean} wasMoving - Whether enemy was moving before attack
+     */
+    setAttackCooldowns(enemy, wasMoving) {
+        setTimeout(() => { 
+            enemy.knockbackActive = false; 
+            if (wasMoving && !enemy.isDead && !enemy.isHurt) enemy.startWalking(); 
+        }, 400);
         enemy.hitCooldown = true;
         setTimeout(() => { enemy.hitCooldown = false; }, 600);
     }
 
+
+    /**
+     * Checks and handles collectible item pickups
+     */
     checkCollectibles() {
         this.level.collectibleItems.forEach((item, index) => {
             if (this.character.isColliding(item)) {
@@ -108,10 +201,19 @@ class World {
         });
     }
 
+
+    /**
+     * Adds interval to tracking array
+     * @param {number} interval - Interval ID to track
+     */
     addInterval(interval) {
         this.intervals.push(interval);
     }
 
+
+    /**
+     * Starts movement for all enemies
+     */
     startEnemyMovement() {
         this.level.enemies.forEach(enemy => {
             if (enemy.startWalking) {
@@ -122,11 +224,23 @@ class World {
         });
     }
 
+
+    /**
+     * Main draw loop for the game
+     */
     draw() {
-        if (!this.isRunning) return; // ✅ NEU: Stoppe sofort wenn cleanup aufgerufen
-        
+        if (!this.isRunning) return;
         this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
         this.character.animate();
+        this.updateEnemies();
+        this.drawWorld();
+    }
+
+
+    /**
+     * Updates all enemy animations and movement
+     */
+    updateEnemies() {
         this.level.enemies.forEach(enemy => {
             if (enemy.isAttacking) {
                 enemy.animateEnemy();
@@ -137,9 +251,12 @@ class World {
                 enemy.animateEnemy();
             }
         });
-        this.drawWorld();
     }
 
+
+    /**
+     * Draws all world objects with camera translation
+     */
     drawWorld() {
         this.energyBar.setPercentageEnergy(this.character.energyGreen);
         this.ctx.translate(this.camera_x, 0);
@@ -153,22 +270,35 @@ class World {
         this.drawUI();
     }
 
+
+    /**
+     * Draws UI elements and requests next frame
+     */
     drawUI() {
         this.addToMap(this.statusBar);
         this.addToMap(this.energyBar);
         this.addToMap(this.coin);
-        
-        if (this.isRunning) { // ✅ NEU: Nur weitermachen wenn noch aktiv
+        if (this.isRunning) {
             this.animationFrame = requestAnimationFrame(() => { this.draw(); });
         }
     }
 
+
+    /**
+     * Adds multiple objects to the map
+     * @param {Array} objects - Array of objects to draw
+     */
     addObjectsToMap(objects) {
         objects.forEach(o => {
             this.addToMap(o);
         });
     }
 
+
+    /**
+     * Adds a single object to the map with direction handling
+     * @param {DrawableObject} mo - Movable object to draw
+     */
     addToMap(mo) {
         if (mo.otherDirection) this.flipImage(mo);
         mo.draw(this.ctx);
@@ -176,6 +306,11 @@ class World {
         if (mo.otherDirection) this.flipImageBack(mo);
     }
 
+
+    /**
+     * Flips image horizontally for opposite direction
+     * @param {DrawableObject} mo - Object to flip
+     */
     flipImage(mo) {
         this.ctx.save();
         const displayWidth = mo.renderWidth || mo.width;
@@ -184,43 +319,66 @@ class World {
         mo.x = mo.x * -1;
     }
 
+
+    /**
+     * Restores image after flipping
+     * @param {DrawableObject} mo - Object to restore
+     */
     flipImageBack(mo) {
         this.ctx.restore();
         mo.x = mo.x * -1;
     }
 
+
+    /**
+     * Cleans up all intervals, animations and audio
+     */
     cleanup() {
-        console.log('🧹 Cleanup started'); // ✅ Debug
-        
-        this.isRunning = false; // ✅ Stoppe ALLE Loops sofort
-        
+        this.isRunning = false;
+        this.stopAnimations();
+        this.stopAudio();
+        this.resetEnemies();
+    }
+
+
+    /**
+     * Stops all animations and intervals
+     */
+    stopAnimations() {
         if (this.animationFrame) {
             cancelAnimationFrame(this.animationFrame);
             this.animationFrame = null;
         }
-        
         if (this.intervals) {
             this.intervals.forEach(interval => clearInterval(interval));
             this.intervals = [];
         }
-        
+    }
+
+
+    /**
+     * Stops all audio playback
+     */
+    stopAudio() {
         if (this.BACKGROUND_MUSIC) {
             this.BACKGROUND_MUSIC.pause();
             this.BACKGROUND_MUSIC.currentTime = 0;
         }
-        
-        // Stoppe Character Audio
         if (this.character.AUDIO_WALK) {
             this.character.AUDIO_WALK.pause();
             this.character.AUDIO_WALK.currentTime = 0;
         }
-        
+    }
+
+
+    /**
+     * Resets all enemy states
+     */
+    resetEnemies() {
         this.level.enemies.forEach(enemy => {
             enemy.isAttacking = false;
             enemy.attackCooldown = false;
             enemy.attackStartTime = 0;
         });
-        
-        console.log('🧹 Cleanup completed'); // ✅ Debug
     }
 }

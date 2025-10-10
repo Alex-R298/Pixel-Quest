@@ -6,6 +6,10 @@ class MovableObject extends DrawableObject {
     energy = 100;
     energyGreen = 100;
 
+
+    /**
+     * Applies gravity to the object
+     */
     applyGravity() {
         if (this.isClimbing) return;
         if (this.checkDeath()) return;
@@ -17,6 +21,11 @@ class MovableObject extends DrawableObject {
         }
     }
 
+
+    /**
+     * Checks if object has fallen to death
+     * @returns {boolean} True if object is dead
+     */
     checkDeath() {
         const deathY = 600;
         if (this.y > deathY) {
@@ -30,16 +39,29 @@ class MovableObject extends DrawableObject {
         return false;
     }
 
+
+    /**
+     * Handles landing on a platform
+     */
     landOnPlatform() {
         this.speedY = 0;
         this.isJumping = false;
     }
 
+
+    /**
+     * Handles falling motion with acceleration
+     */
     fall() {
         this.y += this.speedY;
         this.speedY += this.acceleration;
     }
 
+
+    /**
+     * Checks if object is above ground level
+     * @returns {boolean} True if above ground
+     */
     isAboveGround() {
         if (this.world && this.world.level.platforms) {
             for (let platform of this.world.level.platforms) {
@@ -51,15 +73,25 @@ class MovableObject extends DrawableObject {
         return this.y < (this.world?.level?.groundY || 340);
     }
 
+
+    /**
+     * Checks if object is standing on a platform
+     * @param {Object} platform - Platform object to check
+     * @returns {boolean} True if on platform
+     */
     isOnPlatform(platform) {
         return this.x + this.width > platform.x && 
                this.x < platform.x + platform.width &&
                Math.abs((this.y + this.height) - platform.y) < 5;
     }
 
+
+    /**
+     * Checks collision with all platforms
+     * @returns {boolean} True if colliding with any platform
+     */
     checkPlatformCollision() {
         if (!this.world || !this.world.level.platforms) return false;
-        
         for (let platform of this.world.level.platforms) {
             if (this.isCollidingWithPlatform(platform)) {
                 this.snapToPlatform(platform);
@@ -69,6 +101,12 @@ class MovableObject extends DrawableObject {
         return false;
     }
 
+
+    /**
+     * Checks if object is colliding with a specific platform
+     * @param {Object} platform - Platform object to check
+     * @returns {boolean} True if colliding
+     */
     isCollidingWithPlatform(platform) {
         return this.speedY >= 0 &&
                this.x + this.width > platform.x + 10 &&
@@ -77,19 +115,37 @@ class MovableObject extends DrawableObject {
                this.y + this.height <= platform.y + 20;
     }
 
+
+    /**
+     * Snaps object to platform surface
+     * @param {Object} platform - Platform to snap to
+     */
     snapToPlatform(platform) {
         this.y = platform.y - this.height;
         this.speedY = 0;
         this.isJumping = false;
     }
 
+
+    /**
+     * Checks collision with another movable object
+     * @param {MovableObject} mo - Object to check collision with
+     * @returns {boolean} True if colliding
+     */
     isColliding(mo) {
         const thisOffset = this.hitboxOffset || { x: 0, y: 0, width: 0, height: 0 };
         const moOffset = mo.hitboxOffset || { x: 0, y: 0, width: 0, height: 0 };
-        
         return this.checkHitboxOverlap(thisOffset, moOffset, mo);
     }
 
+
+    /**
+     * Checks if hitboxes overlap
+     * @param {Object} thisOffset - This object's hitbox offset
+     * @param {Object} moOffset - Other object's hitbox offset
+     * @param {MovableObject} mo - Other movable object
+     * @returns {boolean} True if hitboxes overlap
+     */
     checkHitboxOverlap(thisOffset, moOffset, mo) {
         return (
             this.x + thisOffset.x + this.width + thisOffset.width > mo.x + moOffset.x &&
@@ -99,24 +155,31 @@ class MovableObject extends DrawableObject {
         );
     }
 
+
+    /**
+     * Applies damage to the object
+     * @param {number} damage - Amount of damage to apply
+     */
     takeDamage(damage) {
         if (this.isDead) return;
-        
         this.energy -= damage;
         this.isHurt = true;
-        
         if (this.AUDIO_HURT) {
             this.AUDIO_HURT.currentTime = 0;
             this.AUDIO_HURT.volume = 0.1;
             this.AUDIO_HURT.volume = sfxVolume;
             this.AUDIO_HURT.play();
         }
-        
         setTimeout(() => {
             this.isHurt = false;
         }, 600);
     }
 
+
+    /**
+     * Loads multiple images into cache
+     * @param {string[]} arr - Array of image paths
+     */
     loadImages(arr) {
         arr.forEach((path) => {
             const img = new Image();
@@ -125,15 +188,22 @@ class MovableObject extends DrawableObject {
         });
     }
 
+
+    /**
+     * Animates enemy sprite frames
+     */
     animateEnemy() {
         const currentTime = Date.now();
-
         if (currentTime - this.lastFrameTime >= this.animationSpeed) {
             this.advanceFrame();
             this.lastFrameTime = currentTime;
         }
     }
 
+
+    /**
+     * Advances to next animation frame
+     */
     advanceFrame() {
         this.currentFrame++;
         if (this.currentFrame >= this.totalFrames) {
@@ -141,10 +211,18 @@ class MovableObject extends DrawableObject {
         }
     }
 
+
+    /**
+     * Moves object to the right
+     */
     moveRight() {
         this.x += this.speed;
     }
 
+
+    /**
+     * Moves object to the left
+     */
     moveLeft() {
         this.x -= this.speed;
     }

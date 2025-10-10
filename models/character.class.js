@@ -23,9 +23,12 @@ class Character extends MovableObject {
     AUDIO_WALK = new Audio('./audio/walk.mp3');
     walkAudioCooldown = 0;
 
+
+    /**
+     * Creates a new Character instance
+     */
     constructor() {
         super();
-        console.log('🦉 NEW CHARACTER - Energy:', this.energy);
         this.spaceKeyPressed = false;
         this.energyGreen = 100;
         this.energy = 100;
@@ -40,6 +43,10 @@ class Character extends MovableObject {
         this.totalFrames = 4;
     }
 
+
+    /**
+     * Sets volume for all audio effects
+     */
     setAudioVolume() {
         this.AUDIO_JUMP.volume = 0.1;
         this.AUDIO_ATTACK.volume = 0.1;
@@ -48,6 +55,10 @@ class Character extends MovableObject {
         this.walkAudioCooldown = 0;
     }
 
+
+    /**
+     * Loads all sprite images for the character
+     */
     loadSprites() {
         this.idleSprite = new Image();
         this.idleSprite.src = '../img/Owlet_Monster/Idle.png';
@@ -67,6 +78,10 @@ class Character extends MovableObject {
         if (!this.isDead) this.img = this.idleSprite;
     }
 
+
+    /**
+     * Sets idle sprite as default
+     */
     setIdleSprite() {
         if (!this.img || this.img === this.idleSprite) {
             this.img = this.idleSprite;
@@ -76,6 +91,10 @@ class Character extends MovableObject {
         }
     }
 
+
+    /**
+     * Main animation loop for the character
+     */
     animate() {
         if (this.energy <= 0 && !this.isDead) {
             this.handleDeath();
@@ -86,6 +105,10 @@ class Character extends MovableObject {
         this.advanceAnimation();
     }
 
+
+    /**
+     * Handles death animation and state
+     */
     handleDeath() {
         if (!this.deadSprite || !this.deadSprite.complete) return;
         this.isDead = true;
@@ -98,6 +121,10 @@ class Character extends MovableObject {
         setTimeout(() => { showDeadScreen(); }, 1200);
     }
 
+
+    /**
+     * Handles all character animations based on state
+     */
     handleAnimations() {
         if (this.isAttacking && this.attackSprite.complete) {
             this.setSprite(this.attackSprite, 6);
@@ -108,6 +135,10 @@ class Character extends MovableObject {
         }
     }
 
+
+    /**
+     * Handles movement-related animations
+     */
     handleMovementAnimations() {
         if (!this.isJumping && this.img === this.jumpSprite) {
             if (this.world && this.world.keyboard && (this.world.keyboard.D || this.world.keyboard.A)) {
@@ -123,6 +154,10 @@ class Character extends MovableObject {
         }
     }
 
+
+    /**
+     * Handles all keyboard input
+     */
     handleInput() {
         let wasWalking = this.isWalking;
         this.isWalking = false;
@@ -133,6 +168,10 @@ class Character extends MovableObject {
         this.updateCamera();
     }
 
+
+    /**
+     * Handles jump input and execution
+     */
     handleJump() {
         if (this.world.keyboard.SPACE && !this.spaceKeyPressed && !this.isAboveGround() && !this.isJumping) {
             this.AUDIO_JUMP.currentTime = 0;
@@ -144,6 +183,11 @@ class Character extends MovableObject {
         if (!this.world.keyboard.SPACE) this.spaceKeyPressed = false;
     }
 
+
+    /**
+     * Handles walking input and animation
+     * @param {boolean} wasWalking - Previous walking state
+     */
     handleWalking(wasWalking) {
         if ((this.world.keyboard.D || this.world.keyboard.A) && !this.isClimbing) {
             this.isWalking = true;
@@ -158,6 +202,10 @@ class Character extends MovableObject {
         }
     }
 
+
+    /**
+     * Handles left and right movement
+     */
     handleMovement() {
         if (this.world.keyboard.D && this.x < this.world.level.level_end_x) {
             this.otherDirection = false;
@@ -171,6 +219,10 @@ class Character extends MovableObject {
         }
     }
 
+
+    /**
+     * Plays walking sound with cooldown
+     */
     playWalkSound() {
         const now = Date.now();
         if (now - this.walkAudioCooldown > 300) {
@@ -181,12 +233,20 @@ class Character extends MovableObject {
         }
     }
 
+
+    /**
+     * Stops walking sound
+     */
     stopWalkSound() {
         this.AUDIO_WALK.pause();
         this.AUDIO_WALK.currentTime = 0;
         this.walkAudioCooldown = 0;
     }
 
+
+    /**
+     * Handles attack input and execution
+     */
     handleAttack() {
         if (this.world.keyboard.ENTER && !this.enterKeyPressed && !this.isAttacking && !this.isJumping && !this.isClimbing) {
             if (this.energyGreen >= 20) {
@@ -203,12 +263,22 @@ class Character extends MovableObject {
         if (!this.world.keyboard.ENTER) this.enterKeyPressed = false;
     }
 
+
+    /**
+     * Updates camera position based on character position
+     */
     updateCamera() {
         if (this.x > 360 && this.x < 2880 - 360) {
             this.world.camera_x = -this.x + 360;
         }
     }
 
+
+    /**
+     * Sets the current sprite and frame parameters
+     * @param {Image} sprite - The sprite to set
+     * @param {number} frames - Number of frames in sprite
+     */
     setSprite(sprite, frames) {
         if (this.img !== sprite) {
             this.img = sprite;
@@ -219,6 +289,10 @@ class Character extends MovableObject {
         }
     }
 
+
+    /**
+     * Advances animation frame
+     */
     advanceAnimation() {
         const currentTime = Date.now();
         if (currentTime - this.lastFrameTime >= this.animationSpeed) {
@@ -232,6 +306,10 @@ class Character extends MovableObject {
         }
     }
 
+
+    /**
+     * Executes jump action
+     */
     jump() {
         if (!this.isJumping && !this.isAboveGround()) {
             this.isJumping = true;
@@ -240,6 +318,10 @@ class Character extends MovableObject {
         }
     }
 
+
+    /**
+     * Executes attack action
+     */
     attack() {
         if (!this.isAttacking && this.energyGreen > 0) {
             this.isAttacking = true;
@@ -252,6 +334,11 @@ class Character extends MovableObject {
         }
     }
 
+
+    /**
+     * Gets the attack hitbox based on direction
+     * @returns {Object} Hitbox with x, y, width, height properties
+     */
     getAttackHitbox() {
         const attackWidth = 50;
         const attackHeight = 60;
@@ -272,6 +359,12 @@ class Character extends MovableObject {
         }
     }
 
+
+    /**
+     * Checks if attack is hitting a target
+     * @param {Object} target - Target object with position and size
+     * @returns {boolean} True if attack hits target
+     */
     isAttackHitting(target) {
         if (!this.isAttacking) return false;
         const attackBox = this.getAttackHitbox();
@@ -281,6 +374,10 @@ class Character extends MovableObject {
                target.y < attackBox.y + attackBox.height;
     }
 
+
+    /**
+     * Handles ladder climbing mechanics
+     */
     climbLadder() {
         if (!this.world || !this.world.level.ladders) {
             this.resetRenderSize();
@@ -296,6 +393,12 @@ class Character extends MovableObject {
         this.resetRenderSize();
     }
 
+
+    /**
+     * Checks if character is on a ladder
+     * @param {Object} ladder - Ladder object to check
+     * @returns {boolean} True if on ladder
+     */
     isOnLadder(ladder) {
         return this.x + this.width/2 > ladder.x && 
                this.x + this.width/2 < ladder.x + ladder.width &&
@@ -303,6 +406,11 @@ class Character extends MovableObject {
                this.y + this.height <= ladder.yBottom + 60;
     }
 
+
+    /**
+     * Handles climbing input and animation
+     * @param {Object} ladder - Ladder being climbed
+     */
     handleClimbing(ladder) {
         if (this.world.keyboard.W || this.world.keyboard.S) {
             if (!this.isClimbing) {
@@ -320,6 +428,11 @@ class Character extends MovableObject {
         }
     }
 
+
+    /**
+     * Moves character up the ladder
+     * @param {Object} ladder - Ladder being climbed
+     */
     climbUp(ladder) {
         this.y -= 2;
         if (this.y + this.height <= ladder.yTop) {
@@ -329,6 +442,11 @@ class Character extends MovableObject {
         }
     }
 
+
+    /**
+     * Moves character down the ladder
+     * @param {Object} ladder - Ladder being climbed
+     */
     climbDown(ladder) {
         this.y += 2;
         if (this.y + this.height >= ladder.yBottom) {
@@ -337,6 +455,10 @@ class Character extends MovableObject {
         }
     }
 
+
+    /**
+     * Resets render size to default
+     */
     resetRenderSize() {
         this.renderWidth = 80;
         this.renderHeight = 80;

@@ -3,17 +3,27 @@ class Level {
     clouds;
     collectibleItems;
     backgroundObjects;
-    platforms = []; // Neue Eigenschaft für Plattformen
-    ladders = []; // Neue Eigenschaft für Leitern
+    platforms = [];
+    ladders = [];
     level_end_x = 2830;
-    groundY = 600  // Kein Boden mehr - nur Platforms!
+    groundY = 600;
 
-    constructor(enemies, clouds, collectibleItems, backgroundObjects, platforms, ladders) {  // ✅ Reihenfolge wie in level1.js
+
+    /**
+     * Creates a new Level instance
+     * @param {Array} enemies - Array of enemy objects
+     * @param {Array} clouds - Array of cloud objects
+     * @param {Array} collectibleItems - Array of collectible item objects
+     * @param {Array} backgroundObjects - Array of background objects
+     * @param {Array} platforms - Array of platform objects
+     * @param {Array} ladders - Array of ladder objects
+     */
+    constructor(enemies, clouds, collectibleItems, backgroundObjects, platforms, ladders) {
         this.enemies = enemies;
         this.clouds = clouds;
-        this.collectibleItems = collectibleItems;  // ✅ Jetzt richtig zugeordnet
+        this.collectibleItems = collectibleItems;
         this.backgroundObjects = backgroundObjects;
-        this.platforms = platforms;  // Plattformen initialisieren
-        this.ladders = ladders;  // Leitern initialisieren
+        this.platforms = platforms;
+        this.ladders = ladders;
     }
 }

@@ -10,9 +10,7 @@ class BackgroundObject extends MovableObject {
         if (y !== null) {
             this.y = y;
         } else {
-            this.y = 480 - this.height; // Standard: am Boden
-        }
-        this.totalFrames = 1;
-        
+            this.y = 480 - this.height;
+        }this.totalFrames = 1;
     }
 }
