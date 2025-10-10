@@ -72,14 +72,14 @@ class World {
      * @param {MovableObject} enemy - The enemy to check
      */
     handleEnemyCollision(enemy) {
-        const isColliding = enemy.isColliding(this.character);
-        if (isColliding && !this.character.isDead) {
-            this.handleEnemyAttack(enemy);
-        } else if (enemy.isAttacking) {
-            enemy.isAttacking = false;
-            if (!enemy.isHurt) enemy.startWalking();
-        }
+    const isColliding = enemy.isColliding(this.character);
+    if (isColliding && !this.character.isDead && !enemy.isHurt && !enemy.isDead) {
+        this.handleEnemyAttack(enemy);
+    } else if (enemy.isAttacking && (!isColliding || enemy.isHurt)) {
+        enemy.isAttacking = false;
+        if (!enemy.isHurt && !enemy.isDead) enemy.startWalking();
     }
+}
 
 
     /**
@@ -88,7 +88,7 @@ class World {
      */
     handlePlayerAttackCheck(enemy) {
         if (this.character.isAttacking && !enemy.isHurt && !enemy.hitCooldown) {
-            if (this.character.isAttackHitting(enemy)) {
+            if (this.character.actions.isAttackHitting(enemy)) {
                 this.handlePlayerAttack(enemy);
             }
         }
@@ -112,12 +112,15 @@ class World {
      * @param {number} currentTime - Current timestamp
      */
     initiateEnemyAttack(enemy, currentTime) {
-        if (!enemy.isAttacking) {
-            enemy.isAttacking = true;
-            enemy.attackStartTime = currentTime;
-            enemy.stopWalking();
+    if (!enemy.isAttacking) {
+        enemy.isAttacking = true;
+        enemy.attackStartTime = currentTime;
+        enemy.stopWalking();
+        if (enemy.attackEnemy) {
+            enemy.attackEnemy();
         }
     }
+}
 
 
     /**
@@ -126,17 +129,21 @@ class World {
      * @param {number} currentTime - Current timestamp
      */
     executeEnemyAttack(enemy, currentTime) {
-        const attackDelay = enemy instanceof Endboss ? 400 : 300;
-        const cooldownTime = enemy instanceof Endboss ? 1500 : 2000;
-        if (!enemy.attackCooldown && currentTime - enemy.attackStartTime >= attackDelay) {
-            if (enemy.isAttackHitting(this.character) && !this.character.isDead && !this.character.isHurt) {
-                this.character.takeDamage(100/3);
-                this.statusBar.setPercentage(this.character.energy);
-                enemy.attackCooldown = true;
-                setTimeout(() => { enemy.attackCooldown = false; enemy.attackStartTime = Date.now(); }, cooldownTime);
-            }
+    const attackDelay = enemy instanceof Endboss ? 300 : 300;
+    const cooldownTime = enemy instanceof Endboss ? 1000 : 1200;
+    if (!enemy.attackCooldown && currentTime - enemy.attackStartTime >= attackDelay) {
+        if (enemy.isAttackHitting(this.character) && !this.character.isDead) {
+            this.character.takeDamage(100/3);
+            this.statusBar.setPercentage(this.character.energy);
+            enemy.attackCooldown = true;
+            enemy.isAttacking = false;
+            setTimeout(() => { 
+                enemy.attackCooldown = false; 
+                if (!enemy.isDead && !enemy.isHurt) enemy.startWalking();
+            }, cooldownTime);
         }
     }
+}
 
 
     /**
@@ -302,7 +309,6 @@ class World {
     addToMap(mo) {
         if (mo.otherDirection) this.flipImage(mo);
         mo.draw(this.ctx);
-        mo.drawFrame(this.ctx);
         if (mo.otherDirection) this.flipImageBack(mo);
     }
 

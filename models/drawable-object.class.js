@@ -75,14 +75,8 @@ class DrawableObject {
      * @param {CanvasRenderingContext2D} ctx - The canvas rendering context
      */
     drawPlatform(ctx) {
-        if (this.invisible) {
-            if (window.debugMode) {
-                ctx.strokeStyle = 'rgba(255, 0, 0, 0.5)';
-                ctx.lineWidth = 2;
-                ctx.strokeRect(this.x, this.y, this.width, this.height);
-            }
-        } else if (this.img && this.img.complete) {
-            super.draw(ctx);
+        if (!this.invisible && this.img && this.img.complete) {
+            ctx.drawImage(this.img, this.x, this.y, this.width, this.height);
         }
     }
 
@@ -97,26 +91,5 @@ class DrawableObject {
             img.src = path;
             this.imageCache[path] = img;
         });
-    }
-
-
-    /**
-     * Draws hitbox frame for debugging
-     * @param {CanvasRenderingContext2D} ctx - The canvas rendering context
-     */
-    drawFrame(ctx) {
-        if (this instanceof Character || this instanceof Endboss || this instanceof SmallMushroom) {
-            ctx.beginPath();
-            ctx.lineWidth = '2';
-            ctx.strokeStyle = 'red';
-            const offset = this.hitboxOffset || { x: 0, y: 0, width: 0, height: 0 };
-            ctx.rect(
-                this.x + offset.x, 
-                this.y + offset.y, 
-                this.width + offset.width, 
-                this.height + offset.height
-            );
-            ctx.stroke();
-        }
     }
 }

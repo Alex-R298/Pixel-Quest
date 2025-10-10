@@ -11,15 +11,15 @@ class MovableObject extends DrawableObject {
      * Applies gravity to the object
      */
     applyGravity() {
-        if (this.isClimbing) return;
-        if (this.checkDeath()) return;
-        const onPlatform = this.checkPlatformCollision();
-        if (onPlatform) {
-            this.landOnPlatform();
-        } else {
-            this.fall();
-        }
+    if (this.isClimbing) return;
+    if (this.checkDeath()) return;
+    const onPlatform = this.checkPlatformCollision();
+    if (onPlatform && !this.isDead) {
+        this.landOnPlatform();
+    } else {
+        this.fall();
     }
+}
 
 
     /**
@@ -91,14 +91,15 @@ class MovableObject extends DrawableObject {
      * @returns {boolean} True if colliding with any platform
      */
     checkPlatformCollision() {
-        if (!this.world || !this.world.level.platforms) return false;
-        for (let platform of this.world.level.platforms) {
-            if (this.isCollidingWithPlatform(platform)) {
-                this.snapToPlatform(platform);
-                return true;
-            }
+    if (!this.world || !this.world.level.platforms) return false;
+    if (this.isDead) return false;
+    for (let platform of this.world.level.platforms) {
+        if (this.isCollidingWithPlatform(platform)) {
+            this.snapToPlatform(platform);
+            return true;
         }
-        return false;
+    }
+    return false;
     }
 
 
