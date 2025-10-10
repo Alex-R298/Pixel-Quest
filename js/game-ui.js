@@ -139,6 +139,7 @@ function showSettings() {
     clickButtonSound();
     document.getElementById('main-menu').classList.add('d_none');
     document.getElementById('settings-overlay').classList.remove('d_none');
+    document.querySelector('.legal-notice-icon').classList.add('d_none');
 }
 
 
@@ -149,6 +150,7 @@ function closeSettings() {
     clickButtonSound();
     document.getElementById('settings-overlay').classList.add('d_none');
     document.getElementById('main-menu').classList.remove('d_none');
+    document.querySelector('.legal-notice-icon').classList.remove('d_none');
 }
 
 
@@ -159,6 +161,7 @@ function showControls() {
     clickButtonSound();
     document.getElementById('main-menu').classList.add('d_none');
     document.getElementById('controls-overlay').classList.remove('d_none');
+    document.querySelector('.legal-notice-icon').classList.add('d_none');
 }
 
 
@@ -169,6 +172,7 @@ function closeControls() {
     clickButtonSound();
     document.getElementById('controls-overlay').classList.add('d_none');
     document.getElementById('main-menu').classList.remove('d_none');
+    document.querySelector('.legal-notice-icon').classList.remove('d_none');
 }
 
 
