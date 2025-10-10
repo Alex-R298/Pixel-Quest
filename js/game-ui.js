@@ -50,6 +50,7 @@ function getIntroElements() {
  */
 function handleIntroFadeOut(elements) {
     elements.intro.classList.add('fade-out');
+    playStartMusic();
     setTimeout(() => showMainMenu(elements), 500);
 }
 
@@ -64,7 +65,6 @@ function showMainMenu(elements) {
     elements.fullscreenIcon.classList.remove('d_none');
     elements.legalNoticeIcon.classList.remove('d_none');
     elements.menuTitle.style.opacity = '1';
-    playStartMusic();
     setTimeout(() => animateMenuTitle(elements), 500);
 }
 
