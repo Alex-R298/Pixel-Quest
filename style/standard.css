@@ -16,7 +16,7 @@ body::before {
     left: 0;
     right: 0;
     bottom: 0;
-    background-image: url('./img/Background/Background.png');
+    background-image: url('img/Background/Background.png');
     background-size: cover;
     box-shadow: inset 0 0 100px rgba(0, 0, 0, 3);
     z-index: -1;
@@ -24,7 +24,7 @@ body::before {
 
 @font-face {
     font-family: 'Planes_ValMore';
-    src: url('./img/Font/Planes_ValMore.ttf') format('truetype');
+    src: url('img/Font/Planes_ValMore.ttf') format('truetype');
 }
 
 h1 {
@@ -95,14 +95,14 @@ canvas {
     display: inline-block;
     padding: 32px;
     background: 
-        url('./img/Frames/Frame_tile_05.png') top left no-repeat, 
-        url('./img/Frames/Frame_tile_06.png') top right no-repeat, 
-        url('./img/Frames/Frame_tile_13.png') bottom left no-repeat, 
-        url('./img/Frames/Frame_tile_14.png') bottom right no-repeat, 
-        url('./img/Frames/Frame_tile_01.png') top repeat-x, 
-        url('./img/Frames/Frame_tile_09.png') left repeat-y, 
-        url('./img/Frames/Frame_tile_02.png') right repeat-y, 
-        url('./img/Frames/Frame_tile_10.png') bottom repeat-x;
+        url('img/Frames/Frame_tile_05.png') top left no-repeat, 
+        url('img/Frames/Frame_tile_06.png') top right no-repeat, 
+        url('img/Frames/Frame_tile_13.png') bottom left no-repeat, 
+        url('img/Frames/Frame_tile_14.png') bottom right no-repeat, 
+        url('img/Frames/Frame_tile_01.png') top repeat-x, 
+        url('img/Frames/Frame_tile_09.png') left repeat-y, 
+        url('img/Frames/Frame_tile_02.png') right repeat-y, 
+        url('img/Frames/Frame_tile_10.png') bottom repeat-x;
     background-size: 
         32px 32px, 32px 32px, 32px 32px, 32px 32px, 
         calc(100% - 64px) 32px, 32px calc(100% - 64px), 32px calc(100% - 64px), calc(100% - 64px) 32px;

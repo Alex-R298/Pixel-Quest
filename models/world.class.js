@@ -8,7 +8,7 @@ class World {
     statusBar = new StatusBar();
     energyBar = new EnergyBar();
     coin = new Coin();
-    BACKGROUND_MUSIC = new Audio('./audio/background.mp3');
+    BACKGROUND_MUSIC = new Audio('audio/background.mp3');
     isRunning = true;
 
 

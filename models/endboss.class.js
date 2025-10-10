@@ -17,7 +17,7 @@ class Endboss extends MovableObject {
     direction = -1;
     energy = 250;
     hitboxOffset = { x: 15, y: 30, width: 15, height: -30 };
-    AUDIO_HURT = new Audio('./audio/boss-hurt.mp3');
+    AUDIO_HURT = new Audio('audio/boss-hurt.mp3');
     attackStartTime = 0;
     attackCooldown = false;
     hitCooldown = false;
@@ -62,10 +62,10 @@ class Endboss extends MovableObject {
      * Loads all sprite images for the endboss
      */
     loadSprites() {
-        this.walkingSprite = this.createSprite('./img/Huge mushroom/HugeMushroom_walk.png', 6);
-        this.attackSprite = this.createSprite('./img/Huge mushroom/HugeMushroom_attack2.png', 4);
-        this.hurtSprite = this.createSprite('./img/Huge mushroom/HugeMushroom_hurt.png', 4);
-        this.deadSprite = this.createSprite('./img/Huge mushroom/HugeMushroom_death.png', 4);
+        this.walkingSprite = this.createSprite('img/Huge mushroom/HugeMushroom_walk.png', 6);
+        this.attackSprite = this.createSprite('img/Huge mushroom/HugeMushroom_attack2.png', 4);
+        this.hurtSprite = this.createSprite('img/Huge mushroom/HugeMushroom_hurt.png', 4);
+        this.deadSprite = this.createSprite('img/Huge mushroom/HugeMushroom_death.png', 4);
         this.img = this.walkingSprite;
     }
 

@@ -2,8 +2,8 @@ let canvas;
 let world;
 let isGameStarting = true;
 let keyboard = new Keyboard();
-let screenMusic = new Audio('./audio/start-screen.mp3');
-let gameMusic = new Audio('./audio/background.mp3');
+let screenMusic = new Audio('audio/start-screen.mp3');
+let gameMusic = new Audio('audio/background.mp3');
 let musicVolume = 0.08;
 let sfxVolume = 0.08;
 
@@ -250,7 +250,7 @@ function stopGameMusic() {
  * Plays button click sound
  */
 function clickButtonSound() {
-    let clickSound = new Audio('./audio/click.mp3');
+    let clickSound = new Audio('audio/click.mp3');
     clickSound.volume = sfxVolume;
     clickSound.play();
 }
@@ -260,7 +260,7 @@ function clickButtonSound() {
  * Plays game over sound
  */
 function playGameOverSound() {
-    let gameOverSound = new Audio('./audio/game-over.mp3');
+    let gameOverSound = new Audio('audio/game-over.mp3');
     gameOverSound.volume = sfxVolume;
     gameOverSound.play();
 }
@@ -270,7 +270,7 @@ function playGameOverSound() {
  * Plays win sound
  */
 function playWinSound() {
-    let winSound = new Audio('./audio/win-sound.mp3');
+    let winSound = new Audio('audio/win-sound.mp3');
     winSound.volume = sfxVolume;
     winSound.play();
 }

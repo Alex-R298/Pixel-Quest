@@ -4,26 +4,26 @@ class CollectibleItem extends DrawableObject {
     value = 1;
     healAmount = 0;
     
-    COIN_SPRITE = './img/Objects_Animated/Coin.png';
+    COIN_SPRITE = 'img/Objects_Animated/Coin.png';
     FOOD_SPRITES = [
-        './img/Objects/Food/Cake.png',
-        './img/Objects/Food/Cake2.png',
-        './img/Objects/Food/Cherry.png',
-        './img/Objects/Food/Chicken.png',
-        './img/Objects/Food/Cookies.png',
-        './img/Objects/Food/Croissant.png',
-        './img/Objects/Food/Donut.png',
-        './img/Objects/Food/Fish.png',
-        './img/Objects/Food/Hamburger.png',
-        './img/Objects/Food/Meat.png',
-        './img/Objects/Food/Pizza.png',
-        './img/Objects/Food/Radish.png',
-        './img/Objects/Food/Squash.png',
-        './img/Objects/Food/Strawberry.png',
-        './img/Objects/Food/Tomato.png'
+        'img/Objects/Food/Cake.png',
+        'img/Objects/Food/Cake2.png',
+        'img/Objects/Food/Cherry.png',
+        'img/Objects/Food/Chicken.png',
+        'img/Objects/Food/Cookies.png',
+        'img/Objects/Food/Croissant.png',
+        'img/Objects/Food/Donut.png',
+        'img/Objects/Food/Fish.png',
+        'img/Objects/Food/Hamburger.png',
+        'img/Objects/Food/Meat.png',
+        'img/Objects/Food/Pizza.png',
+        'img/Objects/Food/Radish.png',
+        'img/Objects/Food/Squash.png',
+        'img/Objects/Food/Strawberry.png',
+        'img/Objects/Food/Tomato.png'
     ];
-    COIN_SOUND = new Audio('./audio/coin.mp3', 'coin');
-    FOOD_SOUND = new Audio('./audio/food.mp3', 'food');
+    COIN_SOUND = new Audio('audio/coin.mp3', 'coin');
+    FOOD_SOUND = new Audio('audio/food.mp3', 'food');
 
 
     /**

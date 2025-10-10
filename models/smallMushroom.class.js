@@ -17,7 +17,7 @@ class SmallMushroom extends MovableObject {
     direction = -1;
     energy = 100;
     hitboxOffset = { x: 30, y: 10, width: -30, height: -10 };
-    AUDIO_HURT = new Audio('./audio/enemy-hurt.mp3');
+    AUDIO_HURT = new Audio('audio/enemy-hurt.mp3');
     attackStartTime = 0;
     attackCooldown = false;
     hitCooldown = false;
@@ -62,10 +62,10 @@ class SmallMushroom extends MovableObject {
      * Loads all sprite images for the enemy
      */
     loadSprites() {
-        this.walkingSprite = this.createSprite('./img/Small_Mushroom/Small_Mushroom_walk.png');
-        this.attackSprite = this.createSprite('./img/Small_Mushroom/Small_Mushroom_attack.png');
-        this.hurtSprite = this.createSprite('./img/Small_Mushroom/Small_Mushroom_hurt.png');
-        this.deadSprite = this.createSprite('./img/Small_Mushroom/Small_Mushroom_death.png');
+        this.walkingSprite = this.createSprite('img/Small_Mushroom/Small_Mushroom_walk.png');
+        this.attackSprite = this.createSprite('img/Small_Mushroom/Small_Mushroom_attack.png');
+        this.hurtSprite = this.createSprite('img/Small_Mushroom/Small_Mushroom_hurt.png');
+        this.deadSprite = this.createSprite('img/Small_Mushroom/Small_Mushroom_death.png');
         this.img = this.walkingSprite;
     }
 
