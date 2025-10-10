@@ -64,6 +64,7 @@ function showMainMenu(elements) {
     elements.fullscreenIcon.classList.remove('d_none');
     elements.legalNoticeIcon.classList.remove('d_none');
     elements.menuTitle.style.opacity = '1';
+    playStartMusic();
     setTimeout(() => animateMenuTitle(elements), 500);
 }
 

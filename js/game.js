@@ -34,7 +34,6 @@ window.addEventListener('keyup', (e) => {
  * Initializes the game application
  */
 function init() {
-    playStartMusic();
     showIntro();
 }
 
