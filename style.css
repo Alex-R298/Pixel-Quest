@@ -272,6 +272,7 @@
     align-items: flex-end;
     z-index: 20;
     pointer-events: none;
+    touch-action: none; 
 }
 
 .mobile-left,
@@ -282,6 +283,7 @@
     align-items: center;
     pointer-events: all;
     margin: 0px 30px 30px 30px;
+    touch-action: none; 
 }
 
 .mobile-horizontal {
@@ -302,6 +304,7 @@
     cursor: pointer;
     padding: 0;
     transition: all 0.1s ease;
+    touch-action: none;
 }
 
 .mobile-btn:active {
