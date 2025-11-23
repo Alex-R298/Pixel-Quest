@@ -2,6 +2,8 @@
 
 A 2D platformer game built with vanilla JavaScript and HTML5 Canvas. Guide your Owlet Monster character through challenging levels, collect coins, and defeat the endboss!
 
+🎮 **[Play the game here!](https://pixel-quest.alex-reitz.de/)**
+
 ## 🎮 Game Features
 
 - **Smooth character animations** - Idle, running, jumping, climbing, attacking, and hurt states
@@ -137,7 +139,7 @@ This project is created for educational purposes.
 
 ## 👤 Author
 
-**Alex-R298**
+**Alex Reitz**
 - GitHub: [@Alex-R298](https://github.com/Alex-R298)
 
 ## 🙏 Acknowledgments
